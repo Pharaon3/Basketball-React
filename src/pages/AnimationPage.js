@@ -318,6 +318,10 @@ function AnimationPage({
     );
   }
 
+  const makeNewFrame = () => {
+    setFrame(frame + 1);
+  }
+
   return (
     <div className="MainPage">
       <div className="main">
@@ -373,7 +377,7 @@ function AnimationPage({
               {
                 rows
               }
-              <div className="filmButton" onClick={() => navigate("/animation")}>
+              <div className="filmButton" onClick={makeNewFrame}>
                 <FilmIcon />
                 {/* <PlusIcon /> */}
                 <div>+</div>
