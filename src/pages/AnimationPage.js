@@ -71,6 +71,8 @@ function AnimationPage({
   const [drawToolMenuFlag, setDrawToolMenuFlag] = useState(false)
   const [drawTool, setDrawTool] = useState(0)
   const [drawables, setDrawables] = useState([])
+  const [frame, setFrame] = useState(0);
+  const [currentFrame, setCurrentFrame] = useState(0);
 
   useEffect(() => {
     if (!document.mozFullScreen && !document.webkitIsFullScreen)
@@ -306,6 +308,15 @@ function AnimationPage({
   // // }, [lineColor, lineWidth]);
   // });
   /////////////////////////////////////////////////////////////////////////
+  let rows = [];
+  for (let i = 0; i <= frame; i++) {
+    rows.push(
+      <div key={"frame" + i} className="filmButton" onClick={() => navigate("/animation")}>
+        <FilmIcon />
+        <div>{i}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="MainPage">
@@ -358,10 +369,10 @@ function AnimationPage({
               >
                 {!fullScreenFlag ? <MaximizeIcon /> : <MinimizeIcon />}
               </div>
-              <div className="filmButton marginLeft20" onClick={() => navigate("/animation")}>
-                <FilmIcon />
-                <div>0</div>
-              </div>
+              <div style={{width: 20}} />
+              {
+                rows
+              }
               <div className="filmButton" onClick={() => navigate("/animation")}>
                 <FilmIcon />
                 {/* <PlusIcon /> */}
