@@ -199,6 +199,7 @@
                 box-sizing: border-box;
                 .button-group{
                     display: flex;
+                    align-items: center;
                     .button{
                         cursor: pointer;
                         margin: 0px 5px 0px 5px;
@@ -225,6 +226,59 @@
                             svg{
                                 color: #90775c;
                                 stroke: #90775c;
+                            }
+                        }
+                        &.clicked{
+                            background-color: #614628;
+                        }
+                    }
+                    .filmButton{
+                        cursor: pointer;
+                        margin: 0px 1px 0px 1px;
+                        width: 44px;
+                        height: 44px;
+                        border: none;
+                        // border-radius: 3px;
+                        background-color: #90775c;
+                        position: relative;
+                        svg{
+                            // fill: white;
+                            color: white;
+                            fill: white;
+                            stroke-width: 1.8px;
+                            width: 44px;
+                            height: 44px;
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                        }
+                        div{
+                            font-size: 25px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            position: relative;
+                            height: 100%;
+                            color: white;
+                        }
+                        .plusIcon{
+                            font-size: 35px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            position: relative;
+                            height: 80%;
+                            color: white;
+                        }
+                        &:hover{
+                            background-color: white !important;
+                            svg{
+                                color: #90775c;
+                                fill: #90775c;
+                            }
+                            div{
+                                color: #90775c;
                             }
                         }
                         &.clicked{
@@ -750,4 +804,12 @@
 
 .hidden{
     display: none;
+}
+
+.marginLeft20 {
+    margin-left: 20px !important;
+}
+.filmIndex {
+    
+    /* padding-bottom: 43px; */
 }

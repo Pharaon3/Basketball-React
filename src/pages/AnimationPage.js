@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import "./MainPage.scss";
+import "./AnimationPage.scss";
 import { useNavigate } from "react-router-dom";
 import fieldLine from "../assets/field-line-with-logo.png";
 import fieldWithoutLine from "../assets/field-without-line.png";
-// import { ReactComponent as ArrowLeftIcon } from "../assets/svg/arrow-left.svg";
+import { ReactComponent as ArrowLeftIcon } from "../assets/svg/arrow-left.svg";
 import { ReactComponent as MenuIcon } from "../assets/svg/menu.svg";
 import { ReactComponent as LinkIcon } from "../assets/svg/link.svg";
 // import { ReactComponent as CameraIcon } from "../assets/svg/camera.svg";
@@ -13,6 +13,8 @@ import { ReactComponent as FieldIcon } from "../assets/svg/field.svg";
 import { ReactComponent as MinimizeIcon } from "../assets/svg/minimize.svg";
 import { ReactComponent as MaximizeIcon } from "../assets/svg/maximize.svg";
 import { ReactComponent as VideoIcon } from "../assets/svg/video.svg";
+import { ReactComponent as FilmIcon } from "../assets/svg/film.svg";
+import { ReactComponent as PlusIcon } from "../assets/svg/plus.svg";
 // import { ReactComponent as UsersIcon } from "../assets/svg/users.svg"; 
 
 import { ReactComponent as GlobeIcon } from "../assets/svg/globe.svg";
@@ -318,6 +320,9 @@ function AnimationPage({
           onTouchStart={(e) => setPositionByTouch(e)}>
           <div className="button-line">
             <div className="button-group">
+              <div className="button" onClick={() => navigate("/main")}>
+                <ArrowLeftIcon />
+              </div>
               <div className="button" onClick={() => setRosterShowFlag(!rosterShowFlag)}>
                 <MenuIcon />
               </div>
@@ -353,8 +358,14 @@ function AnimationPage({
               >
                 {!fullScreenFlag ? <MaximizeIcon /> : <MinimizeIcon />}
               </div>
-              <div className="button" onClick={() => navigate("/animation")}>
-                <VideoIcon style={{ color: "red", stroke: "red" }} />
+              <div className="filmButton marginLeft20" onClick={() => navigate("/animation")}>
+                <FilmIcon />
+                <div>0</div>
+              </div>
+              <div className="filmButton" onClick={() => navigate("/animation")}>
+                <FilmIcon />
+                {/* <PlusIcon /> */}
+                <div>+</div>
               </div>
             </div>
             <div className="button-group">
@@ -507,7 +518,7 @@ function AnimationPage({
               }
             </div>
             <SceneWithDrawables width={imgWidth} height={imgHeight} drawTool={drawTool} color={"green"}
-              drawables={drawables} setDrawables={setDrawables} drawToolMenuFlag={drawToolMenuFlag}/>
+              drawables={drawables} setDrawables={setDrawables} drawToolMenuFlag={drawToolMenuFlag} />
           </div>
           <div className="button-line">
             <div className="circles">
@@ -544,27 +555,27 @@ function AnimationPage({
               <div className={drawToolMenuFlag ? "draw-tool-menu" : "hidden"}>
                 <div className="button" onClick={() => { setDrawTool(0); setDrawToolMenuFlag(false) }}
                   onTouchEnd={() => { setDrawTool(0); setDrawToolMenuFlag(false) }}
-                  >
+                >
                   <PointerIcon />
                 </div>
                 <div className="button" onClick={() => { setDrawTool(1); setDrawToolMenuFlag(false) }}
                   onTouchEnd={() => { setDrawTool(1); setDrawToolMenuFlag(false) }}
-                  >
+                >
                   <PencilIcon />
                 </div>
                 <div className="button" onClick={() => { setDrawTool(2); setDrawToolMenuFlag(false) }}
                   onTouchEnd={() => { setDrawTool(2); setDrawToolMenuFlag(false) }}
-                  >
+                >
                   <ArrowIcon />
                 </div>
                 <div className="button" onClick={() => { setDrawTool(3); setDrawToolMenuFlag(false) }}
                   onTouchEnd={() => { setDrawTool(3); setDrawToolMenuFlag(false) }}
-                  >
+                >
                   <CircleIcon />
                 </div>
                 <div className="button" onClick={() => { setDrawTool(4); setDrawToolMenuFlag(false) }}
                   onTouchEnd={() => { setDrawTool(4); setDrawToolMenuFlag(false) }}
-                  >
+                >
                   <SquareIcon />
                 </div>
                 {/* <div className="button" onClick={() => { setDrawTool(5); setDrawToolMenuFlag(false) }}
