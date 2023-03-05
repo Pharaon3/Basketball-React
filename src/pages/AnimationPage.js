@@ -39,6 +39,8 @@ import { ReactComponent as CircleIcon } from "../assets/svg/circle.svg";
 import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
 import { ReactComponent as TypeIcon } from "../assets/svg/type.svg";
 
+import { CurveInterpolator } from 'curve-interpolator';
+
 import mainLogo from "../assets/logo.png";
 import html2canvas from "html2canvas";
 import SceneWithDrawables from "../components/SceneWithDrawables";
@@ -322,6 +324,28 @@ function AnimationPage({
     setFrame(frame + 1);
   }
 
+  const points = [
+    [0, 0],
+    [400, 300],
+    [300, 400],
+    [600, 600]
+  ];
+  
+  const interp = new CurveInterpolator(points, { tension: 0.2, alpha: 0.9 });
+  
+  // get points evently distributed along the curve
+  const segments = 1000;
+  const pts = interp.getPoints(segments);
+
+  // console.log(pts)
+  let curvLine = [];
+  for (let i = 0; i < segments; i++) {
+    curvLine.push(
+      <div key={"curve" + i} style={{backgroundColor: "black", top: `${pts[i][1]}px`, left: `${pts[i][0]}px`, width: 1, height: 1, position: "absolute", zIndex: 1000}}>
+      </div>
+    );
+  }
+
   return (
     <div className="MainPage">
       <div className="main">
@@ -376,6 +400,9 @@ function AnimationPage({
               <div style={{width: 20}} />
               {
                 rows
+              }
+              {
+                curvLine
               }
               <div className="filmButton" onClick={makeNewFrame}>
                 <FilmIcon />
