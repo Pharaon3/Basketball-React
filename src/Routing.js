@@ -55,21 +55,21 @@ function Routing({fullScreenHandle}) {
             path="/main"
             element={
               <MainPage
-              fieldLineFlag={fieldLineFlag}  setFieldLineFlag={setFieldLineFlag}
-              fullScreenFlag={fullScreenFlag} setFullScreenFlag={setFullScreenFlag}
-              fullScreenHandle={fullScreenHandle}
+                fieldLineFlag={fieldLineFlag}  setFieldLineFlag={setFieldLineFlag}
+                fullScreenFlag={fullScreenFlag} setFullScreenFlag={setFullScreenFlag}
+                fullScreenHandle={fullScreenHandle}
 
-              imgWidth={imgWidth} setImgWidth={setImgWidth}
-              imgHeight={imgHeight} setImgHeight={setImgHeight}
-              windowsWidth={windowsWidth} setWindowsWidth={setWindowsWidth}
-              mousePosX={mousePosX} setMousePosX={setMousePosX}
-              mousePosY={mousePosY} setMousePosY={setMousePosY}
-              newCircles={newCircles} setNewCircles={setNewCircles}
-              newPoints={newPoints} setNewPoints={setNewPoints}
-              newBalls={newBalls} setNewBalls={setNewBalls}
-              positionCircleDiff={positionCircleDiff} setPositionCircleDiff={setPositionCircleDiff}
-              positionPointDiff={positionPointDiff} setPositionPointDiff={setPositionPointDiff}
-              positionBallDiff={positionBallDiff} setPositionBallDiff={setPositionBallDiff}
+                imgWidth={imgWidth} setImgWidth={setImgWidth}
+                imgHeight={imgHeight} setImgHeight={setImgHeight}
+                windowsWidth={windowsWidth} setWindowsWidth={setWindowsWidth}
+                mousePosX={mousePosX} setMousePosX={setMousePosX}
+                mousePosY={mousePosY} setMousePosY={setMousePosY}
+                newCircles={newCircles} setNewCircles={setNewCircles}
+                newPoints={newPoints} setNewPoints={setNewPoints}
+                newBalls={newBalls} setNewBalls={setNewBalls}
+                positionCircleDiff={positionCircleDiff} setPositionCircleDiff={setPositionCircleDiff}
+                positionPointDiff={positionPointDiff} setPositionPointDiff={setPositionPointDiff}
+                positionBallDiff={positionBallDiff} setPositionBallDiff={setPositionBallDiff}
               />
             }
           />}
@@ -84,6 +84,7 @@ function Routing({fullScreenHandle}) {
                 fullScreenHandle={fullScreenHandle}
 
                 imgWidth={imgWidth} setImgWidth={setImgWidth}
+                imgHeight={imgHeight} setImgHeight={setImgHeight}
                 windowsWidth={windowsWidth} setWindowsWidth={setWindowsWidth}
                 mousePosX={mousePosX} setMousePosX={setMousePosX}
                 mousePosY={mousePosY} setMousePosY={setMousePosY}

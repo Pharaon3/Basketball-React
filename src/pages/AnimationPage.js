@@ -1,37 +1,45 @@
 import React, { useEffect, useState } from "react";
-import "./AnimationPage.scss";
+import "./MainPage.scss";
 import { useNavigate } from "react-router-dom";
 import fieldLine from "../assets/field-line-with-logo.png";
 import fieldWithoutLine from "../assets/field-without-line.png";
-import { ReactComponent as ArrowLeftIcon } from "../assets/svg/arrow-left.svg";
+// import { ReactComponent as ArrowLeftIcon } from "../assets/svg/arrow-left.svg";
 import { ReactComponent as MenuIcon } from "../assets/svg/menu.svg";
 import { ReactComponent as LinkIcon } from "../assets/svg/link.svg";
-import { ReactComponent as CameraIcon } from "../assets/svg/camera.svg";
+// import { ReactComponent as CameraIcon } from "../assets/svg/camera.svg";
 import { ReactComponent as DownloadIcon } from "../assets/svg/download.svg";
 // import { ReactComponent as BookmarkIcon } from "../assets/svg/bookmark.svg";
 import { ReactComponent as FieldIcon } from "../assets/svg/field.svg";
 import { ReactComponent as MinimizeIcon } from "../assets/svg/minimize.svg";
 import { ReactComponent as MaximizeIcon } from "../assets/svg/maximize.svg";
-// import { ReactComponent as VideoIcon } from "../assets/svg/video.svg";
-// import { ReactComponent as UsersIcon } from "../assets/svg/users.svg";
+import { ReactComponent as VideoIcon } from "../assets/svg/video.svg";
+// import { ReactComponent as UsersIcon } from "../assets/svg/users.svg"; 
 
-// import { ReactComponent as GlobeIcon } from "../assets/svg/globe.svg";
-// import { ReactComponent as HelpCircleIcon } from "../assets/svg/help-circle.svg";
-// import { ReactComponent as LogInIcon } from "../assets/svg/log-in.svg";
+import { ReactComponent as GlobeIcon } from "../assets/svg/globe.svg";
+import { ReactComponent as HelpCircleIcon } from "../assets/svg/help-circle.svg";
+import { ReactComponent as LogInIcon } from "../assets/svg/log-in.svg";
 
-import { ReactComponent as PlayIcon } from "../assets/svg/play.svg";
-import { ReactComponent as PlayCircleIcon } from "../assets/svg/play-circle.svg";
-import { ReactComponent as PauseIcon } from "../assets/svg/pause.svg";
-import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
-import { ReactComponent as RepeatIcon } from "../assets/svg/repeat.svg";
+// import { ReactComponent as PlayIcon } from "../assets/svg/play.svg";
+// import { ReactComponent as PlayCircleIcon } from "../assets/svg/play-circle.svg";
+// import { ReactComponent as PauseIcon } from "../assets/svg/pause.svg";
+// import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
+// import { ReactComponent as RepeatIcon } from "../assets/svg/repeat.svg";
 
 import { ReactComponent as BallIcon } from "../assets/svg/basketball.svg";
 import { ReactComponent as TrashIcon } from "../assets/svg/trash.svg";
 import { ReactComponent as RotateIcon } from "../assets/svg/rotate-ccw.svg";
 import { ReactComponent as UserIcon } from "../assets/svg/user.svg";
 
+import { ReactComponent as PencilIcon } from "../assets/svg/pencil.svg";
+import { ReactComponent as ArrowIcon } from "../assets/svg/mouse-pointer.svg";
+import { ReactComponent as PointerIcon } from "../assets/svg/x.svg";
+import { ReactComponent as CircleIcon } from "../assets/svg/circle.svg";
+import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
+import { ReactComponent as TypeIcon } from "../assets/svg/type.svg";
+
 import mainLogo from "../assets/logo.png";
 import html2canvas from "html2canvas";
+import SceneWithDrawables from "../components/SceneWithDrawables";
 var onceFlag = true
 
 function AnimationPage({
@@ -39,6 +47,7 @@ function AnimationPage({
   fullScreenFlag, setFullScreenFlag,
   fullScreenHandle,
   imgWidth, setImgWidth,
+  imgHeight, setImgHeight,
   windowsWidth, setWindowsWidth,
   mousePosX, setMousePosX,
   mousePosY, setMousePosY,
@@ -54,6 +63,12 @@ function AnimationPage({
   const [dragPointItem, setDragPointItem] = useState(-2)
   const [dragBallItem, setDragBallItem] = useState(-2)
   const [dropMenuItem, setDropMenuItem] = useState(-1)
+  const [rosterShowFlag, setRosterShowFlag] = useState(false)
+  const [currentNumbers, setCurrentNumbers] = useState([1, 1, 1, 1, 1, 1, 1, 1])
+  const colorArray = ['red', 'blue', 'brown', 'yellow', 'green', 'white', 'grey', 'black']
+  const [drawToolMenuFlag, setDrawToolMenuFlag] = useState(false)
+  const [drawTool, setDrawTool] = useState(0)
+  const [drawables, setDrawables] = useState([])
 
   useEffect(() => {
     if (!document.mozFullScreen && !document.webkitIsFullScreen)
@@ -67,6 +82,7 @@ function AnimationPage({
       const tempInnerWidth = window.innerWidth
       setWindowsWidth(tempInnerWidth)
       setImgWidth(document?.getElementById("image-to-download")?.getBoundingClientRect()?.width)
+      setImgHeight(document?.getElementById("image-to-download")?.getBoundingClientRect()?.height)
       if (tempInnerWidth > 1170) {
         setPositionCircleDiff(18)
         setPositionPointDiff(10)
@@ -84,7 +100,7 @@ function AnimationPage({
       }
       return () => clearInterval(interval);
     }, 50);
-  }, [windowsWidth, setWindowsWidth, imgWidth, setImgWidth, setPositionCircleDiff, setPositionPointDiff, setPositionBallDiff]);
+  }, [windowsWidth, setWindowsWidth, setImgWidth, setImgHeight, setPositionCircleDiff, setPositionPointDiff, setPositionBallDiff]);
   const exportAsImage = async (element, imageFileName, downloadFlag) => {
     const canvas = await html2canvas(element);
     const image = canvas.toDataURL("image/png", 1.0);
@@ -123,15 +139,21 @@ function AnimationPage({
     setDragCircleItem(index)
     setDropMenuItem(-1)
     if (creatingFlag) {
+      var tempCurrentId = colorArray.indexOf(color)
       const newObject = {
         color: color,
-        number: 1,
+        number: currentNumbers[tempCurrentId],
         name: "",
         mousePosX: mousePosX,
         mousePosY: mousePosY,
         imgWidth: imgWidth
       }
       newCircles.push(newObject)
+      const nextCurrentNumbers = currentNumbers.map((item, index) => {
+        if (index !== tempCurrentId) return item;
+        else return item + 1
+      });
+      setCurrentNumbers(nextCurrentNumbers);
     }
   }
   const circleReleased = () => {
@@ -209,29 +231,94 @@ function AnimationPage({
     setDragBallItem(-2)
   }
 
+
+  //////////drawPenciling lines/////////////////////////////////////////
+  // const canvasRef = useRef(null);
+  // const ctxRef = useRef(null);
+  // const [isdrawPenciling, setIsdrawPenciling] = useState(false);
+  // // const [lineWidth, setLineWidth] = useState(5);
+  // // const [lineColor, setLineColor] = useState("blue");
+
+  // const startPencildrawPenciling = (e) => {
+  //   console.log(e)
+  //   if(drawTool!==1) return
+  //   ctxRef.current.beginPath();
+  //   ctxRef.current.moveTo(
+  //     e.nativeEvent.offsetX, 
+  //     e.nativeEvent.offsetY
+  //   );
+  //   setIsdrawPenciling(true);
+  // };
+  // const startPencildrawPencilingByTouch = (e) => {
+  //   console.log(e)
+  //   if(drawTool!==1) return
+  //   ctxRef.current.beginPath();
+  //   var rect = e.target.getBoundingClientRect();
+  //   var x = e.targetTouches[0].pageX - rect.left;
+  //   var y = e.targetTouches[0].pageY - rect.top;
+  //   ctxRef.current.moveTo(x,y);
+  //   setIsdrawPenciling(true);
+  // };
+
+  // // Function for ending the drawPenciling
+  // const endPencildrawPenciling = () => {
+  //   if(drawTool!==1) return
+  //   ctxRef.current.closePath();
+  //   setIsdrawPenciling(false);
+  // };
+
+  // const drawPencil = (e) => {
+  //   if(drawTool!==1) return
+  //   if (!isdrawPenciling) {
+  //     return;
+  //   }
+  //   ctxRef.current.lineTo(
+  //     e.nativeEvent.offsetX, 
+  //     e.nativeEvent.offsetY
+  //   );
+
+  //   ctxRef.current.stroke();
+  // };
+  // const drawPencilByTouch = (e) => {
+  //   if(drawTool!==1) return
+  //   if (!isdrawPenciling) {
+  //     return;
+  //   }
+  //   var rect = e.target.getBoundingClientRect();
+  //   var x = e.targetTouches[0].pageX - rect.left;
+  //   var y = e.targetTouches[0].pageY - rect.top;
+  //   ctxRef.current.lineTo(x,y);
+
+  //   ctxRef.current.stroke();
+  // };
+  // useEffect(() => {
+  //   const canvas = canvasRef.current;
+  //   const ctx = canvas.getContext("2d");
+  //   ctx.lineCap = "round";
+  //   ctx.lineJoin = "round";
+  //   // ctx.strokeStyle = lineColor;
+  //   // ctx.lineWidth = lineWidth;
+  //   ctx.strokeStyle = "blue";
+  //   ctx.lineWidth = 3;
+  //   ctxRef.current = ctx;
+  // // }, [lineColor, lineWidth]);
+  // });
+  /////////////////////////////////////////////////////////////////////////
+
   return (
-    <div className="AnimationPage">
-      <div className="top-user-info">
-        <img src={mainLogo} alt="" />
-        <div className="user-avatar">
-          <UserIcon />
-          Williams
-        </div>
-      </div>
+    <div className="MainPage">
       <div className="main">
         <div className="board"
-          onMouseUp={() => { circleReleased(); pointReleased(); ballReleased() }}
-          onTouchEnd={() => { circleReleased(); pointReleased(); ballReleased() }}
+          onClick={() => { if (rosterShowFlag) setRosterShowFlag(false) }}
+          onMouseUp={() => { circleReleased(); pointReleased(); ballReleased(); setDrawToolMenuFlag(false) }}
+          onTouchEnd={() => { circleReleased(); pointReleased(); ballReleased(); setDrawToolMenuFlag(false) }}
           onMouseLeave={() => { circleReleased(); pointReleased(); ballReleased() }}
           onMouseMove={(e) => setPositionByMouse(e)}
           onTouchMove={(e) => setPositionByTouch(e)}
           onTouchStart={(e) => setPositionByTouch(e)}>
           <div className="button-line">
             <div className="button-group">
-              <div className="button" onClick={() => navigate("/main")}>
-                <ArrowLeftIcon />
-              </div>
-              <div className="button">
+              <div className="button" onClick={() => setRosterShowFlag(!rosterShowFlag)}>
                 <MenuIcon />
               </div>
               <div className="button">
@@ -246,9 +333,6 @@ function AnimationPage({
                     true
                   )}
               >
-                <CameraIcon />
-              </div>
-              <div className="button">
                 <DownloadIcon />
               </div>
               <div
@@ -269,22 +353,19 @@ function AnimationPage({
               >
                 {!fullScreenFlag ? <MaximizeIcon /> : <MinimizeIcon />}
               </div>
+              <div className="button" onClick={() => navigate("/animation")}>
+                <VideoIcon style={{ color: "red", stroke: "red" }} />
+              </div>
             </div>
             <div className="button-group">
               <div className="button">
-                <PlayIcon />
+                <GlobeIcon />
               </div>
               <div className="button">
-                <PlayCircleIcon />
+                <HelpCircleIcon />
               </div>
               <div className="button">
-                <PauseIcon />
-              </div>
-              <div className="button">
-                <SquareIcon />
-              </div>
-              <div className="button">
-                <RepeatIcon />
+                <LogInIcon />
               </div>
             </div>
           </div>
@@ -293,10 +374,10 @@ function AnimationPage({
               src={fieldLineFlag ? fieldLine : fieldWithoutLine}
               alt="BACKGROUND"
             />
-            <div id="new-circles">
+            <div id="new-circles" style={(drawTool !== 0) ? { pointerEvents: 'none' } : {}}>
               {
                 newCircles?.map((item, index) => {
-                  const defaultStyle = { top: `${item?.mousePosY*(imgWidth/item?.imgWidth) - positionCircleDiff}px`, left: `${item?.mousePosX*(imgWidth/item?.imgWidth) - positionCircleDiff}px` }
+                  const defaultStyle = { top: `${item?.mousePosY * (imgWidth / item?.imgWidth) - positionCircleDiff}px`, left: `${item?.mousePosX * (imgWidth / item?.imgWidth) - positionCircleDiff}px` }
                   const dragStyle = { top: `${mousePosY - positionCircleDiff}px`, left: `${mousePosX - positionCircleDiff}px` }
                   var contextFlag = false
                   return (
@@ -365,7 +446,7 @@ function AnimationPage({
               }
               {
                 newPoints?.map((item, index) => {
-                  const defaultStyle = { top: `${item?.mousePosY*(imgWidth/item?.imgWidth) - positionPointDiff}px`, left: `${item?.mousePosX*(imgWidth/item?.imgWidth) - positionPointDiff}px` }
+                  const defaultStyle = { top: `${item?.mousePosY * (imgWidth / item?.imgWidth) - positionPointDiff}px`, left: `${item?.mousePosX * (imgWidth / item?.imgWidth) - positionPointDiff}px` }
                   const dragStyle = { top: `${mousePosY - positionPointDiff}px`, left: `${mousePosX - positionPointDiff}px` }
                   var contextFlag = false
                   return (
@@ -395,7 +476,7 @@ function AnimationPage({
               }
               {
                 newBalls?.map((item, index) => {
-                  const defaultStyle = { top: `${item?.mousePosY*(imgWidth/item?.imgWidth) - positionBallDiff}px`, left: `${item?.mousePosX*(imgWidth/item?.imgWidth) - positionBallDiff}px` }
+                  const defaultStyle = { top: `${item?.mousePosY * (imgWidth / item?.imgWidth) - positionBallDiff}px`, left: `${item?.mousePosX * (imgWidth / item?.imgWidth) - positionBallDiff}px` }
                   const dragStyle = { top: `${mousePosY - positionBallDiff}px`, left: `${mousePosX - positionBallDiff}px` }
                   var contextFlag = false
                   return (
@@ -425,17 +506,19 @@ function AnimationPage({
                 })
               }
             </div>
+            <SceneWithDrawables width={imgWidth} height={imgHeight} drawTool={drawTool} color={"green"}
+              drawables={drawables} setDrawables={setDrawables} drawToolMenuFlag={drawToolMenuFlag}/>
           </div>
           <div className="button-line">
-          <div className="circles">
-              <div className="circle red" onMouseDown={() => circlePicked(true, -1, "red")} onTouchStart={() => circlePicked(true, -1, "red")}></div>
-              <div className="circle blue" onMouseDown={() => circlePicked(true, -1, "blue")} onTouchStart={() => circlePicked(true, -1, "blue")}></div>
-              <div className="circle brown" onMouseDown={() => circlePicked(true, -1, "brown")} onTouchStart={() => circlePicked(true, -1, "brown")}></div>
-              <div className="circle yellow" onMouseDown={() => circlePicked(true, -1, "yellow")} onTouchStart={() => circlePicked(true, -1, "yellow")}></div>
-              <div className="circle green" onMouseDown={() => circlePicked(true, -1, "green")} onTouchStart={() => circlePicked(true, -1, "green")}></div>
-              <div className="circle white" onMouseDown={() => circlePicked(true, -1, "white")} onTouchStart={() => circlePicked(true, -1, "white")}></div>
-              <div className="circle grey" onMouseDown={() => circlePicked(true, -1, "grey")} onTouchStart={() => circlePicked(true, -1, "grey")}></div>
-              <div className="circle black" onMouseDown={() => circlePicked(true, -1, "black")} onTouchStart={() => circlePicked(true, -1, "black")}></div>
+            <div className="circles">
+              <div className="circle red" onMouseDown={() => circlePicked(true, -1, "red")} onTouchStart={() => circlePicked(true, -1, "red")}>{currentNumbers[0]}</div>
+              <div className="circle blue" onMouseDown={() => circlePicked(true, -1, "blue")} onTouchStart={() => circlePicked(true, -1, "blue")}>{currentNumbers[1]}</div>
+              <div className="circle brown" onMouseDown={() => circlePicked(true, -1, "brown")} onTouchStart={() => circlePicked(true, -1, "brown")}>{currentNumbers[2]}</div>
+              <div className="circle yellow" onMouseDown={() => circlePicked(true, -1, "yellow")} onTouchStart={() => circlePicked(true, -1, "yellow")}>{currentNumbers[3]}</div>
+              <div className="circle green" onMouseDown={() => circlePicked(true, -1, "green")} onTouchStart={() => circlePicked(true, -1, "green")}>{currentNumbers[4]}</div>
+              <div className="circle white" onMouseDown={() => circlePicked(true, -1, "white")} onTouchStart={() => circlePicked(true, -1, "white")}>{currentNumbers[5]}</div>
+              <div className="circle grey" onMouseDown={() => circlePicked(true, -1, "grey")} onTouchStart={() => circlePicked(true, -1, "grey")}>{currentNumbers[6]}</div>
+              <div className="circle black" onMouseDown={() => circlePicked(true, -1, "black")} onTouchStart={() => circlePicked(true, -1, "black")}>{currentNumbers[7]}</div>
 
               <div className="point purple" onMouseDown={() => pointPicked(true, -1, "purple")} onTouchStart={() => pointPicked(true, -1, "purple")} />
               <div className="point orange" onMouseDown={() => pointPicked(true, -1, "orange")} onTouchStart={() => pointPicked(true, -1, "orange")} />
@@ -446,17 +529,73 @@ function AnimationPage({
               </div>
             </div>
             <div className="button-group">
+              <div className={"button"} onClick={() => setDrawToolMenuFlag(!drawToolMenuFlag)}>
+                {
+                  {
+                    0: <PointerIcon />,
+                    1: <PencilIcon />,
+                    2: <ArrowIcon />,
+                    3: <CircleIcon />,
+                    4: <SquareIcon />,
+                    5: <TypeIcon />,
+                  }[drawTool]
+                }
+              </div>
+              <div className={drawToolMenuFlag ? "draw-tool-menu" : "hidden"}>
+                <div className="button" onClick={() => { setDrawTool(0); setDrawToolMenuFlag(false) }}
+                  onTouchEnd={() => { setDrawTool(0); setDrawToolMenuFlag(false) }}
+                  >
+                  <PointerIcon />
+                </div>
+                <div className="button" onClick={() => { setDrawTool(1); setDrawToolMenuFlag(false) }}
+                  onTouchEnd={() => { setDrawTool(1); setDrawToolMenuFlag(false) }}
+                  >
+                  <PencilIcon />
+                </div>
+                <div className="button" onClick={() => { setDrawTool(2); setDrawToolMenuFlag(false) }}
+                  onTouchEnd={() => { setDrawTool(2); setDrawToolMenuFlag(false) }}
+                  >
+                  <ArrowIcon />
+                </div>
+                <div className="button" onClick={() => { setDrawTool(3); setDrawToolMenuFlag(false) }}
+                  onTouchEnd={() => { setDrawTool(3); setDrawToolMenuFlag(false) }}
+                  >
+                  <CircleIcon />
+                </div>
+                <div className="button" onClick={() => { setDrawTool(4); setDrawToolMenuFlag(false) }}
+                  onTouchEnd={() => { setDrawTool(4); setDrawToolMenuFlag(false) }}
+                  >
+                  <SquareIcon />
+                </div>
+                {/* <div className="button" onClick={() => { setDrawTool(5); setDrawToolMenuFlag(false) }}
+                  onTouchEnd={() => { setDrawTool(5); setDrawToolMenuFlag(false) }}
+                  >
+                  <TypeIcon />
+                </div> */}
+                <div className="button" onClick={() => setDrawToolMenuFlag(false)}>
+                  {
+                    {
+                      0: <PointerIcon />,
+                      1: <PencilIcon />,
+                      2: <ArrowIcon />,
+                      3: <CircleIcon />,
+                      4: <SquareIcon />,
+                      5: <TypeIcon />,
+                    }[drawTool]
+                  }
+                </div>
+              </div>
               <div className="button">
                 <RotateIcon />
               </div>
-              <div className="button" onClick={() => { setNewCircles([]); setNewPoints([]); setNewBalls([]) }}>
+              <div className="button" onClick={() => { setNewCircles([]); setNewPoints([]); setNewBalls([]); setDrawables([]) }}>
                 <TrashIcon />
               </div>
             </div>
           </div>
         </div>
-        <div className="roster">
-          <div className="hidden">
+        <div className={rosterShowFlag ? "roster show" : "roster"}>
+          <div className="top-user-info">
             <img src={mainLogo} alt="" />
             <div className="user-avatar">
               <UserIcon />
