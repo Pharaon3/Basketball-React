@@ -809,7 +809,11 @@
 .marginLeft20 {
     margin-left: 20px !important;
 }
-.filmIndex {
-    
-    /* padding-bottom: 43px; */
+.curve{
+    background-color: black;
+    width: 1px;
+    height: 1px;
+    position: absolute;
+    z-index: 1000;
+    border-radius: 1px;
 }

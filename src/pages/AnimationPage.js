@@ -40,6 +40,9 @@ import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
 import { ReactComponent as TypeIcon } from "../assets/svg/type.svg";
 
 import { CurveInterpolator } from 'curve-interpolator';
+import {
+  NaturalCurve
+} from "react-svg-curve";
 
 import mainLogo from "../assets/logo.png";
 import html2canvas from "html2canvas";
@@ -75,6 +78,8 @@ function AnimationPage({
   const [drawables, setDrawables] = useState([])
   const [frame, setFrame] = useState(0);
   const [currentFrame, setCurrentFrame] = useState(0);
+  const [eachFrameCircle, setEachFrameCircle] = useState([]);
+  const [allCircleData, setAllCircleData] = useState([])
 
   useEffect(() => {
     if (!document.mozFullScreen && !document.webkitIsFullScreen)
@@ -154,7 +159,8 @@ function AnimationPage({
         mousePosY: mousePosY,
         imgWidth: imgWidth
       }
-      newCircles.push(newObject)
+      eachFrameCircle.push(newObject)
+      if(newCircles.length < currentFrame + 1) newCircles.push(eachFrameCircle)
       const nextCurrentNumbers = currentNumbers.map((item, index) => {
         if (index !== tempCurrentId) return item;
         else return item + 1
@@ -164,8 +170,8 @@ function AnimationPage({
   }
   const circleReleased = () => {
     if (dragCircleItem === -2) return
-    const releasingId = dragCircleItem > -1 ? dragCircleItem : newCircles?.length - 1
-    const nextNewCircles = newCircles?.map((item, index) => {
+    const releasingId = dragCircleItem > -1 ? dragCircleItem : eachFrameCircle?.length - 1
+    const nextNewCircles = eachFrameCircle?.map((item, index) => {
       if (index === releasingId) {
         return {
           ...item,
@@ -176,7 +182,20 @@ function AnimationPage({
       }
       else return item
     })
-    setNewCircles(nextNewCircles)
+    setEachFrameCircle(nextNewCircles);
+    var nextNewCircles1 = newCircles;
+    nextNewCircles1?.map((item, index) => {
+      console.log("item: ", item);
+      console.log("index: ", index);
+      if(index === currentFrame){
+        nextNewCircles1[index] = eachFrameCircle;
+      }
+      else return item
+    })
+    setNewCircles(nextNewCircles1);
+    console.log("eachFrameCircle", eachFrameCircle);
+    console.log("newCircles", newCircles);
+    console.log("currentFrame", currentFrame);
     setDragCircleItem(-2)
   }
   const pointPicked = (creatingFlag, index, color) => {
@@ -236,7 +255,6 @@ function AnimationPage({
     setNewBalls(nextNewBalls)
     setDragBallItem(-2)
   }
-
 
   //////////drawPenciling lines/////////////////////////////////////////
   // const canvasRef = useRef(null);
@@ -322,27 +340,37 @@ function AnimationPage({
 
   const makeNewFrame = () => {
     setFrame(frame + 1);
+    setCurrentFrame(currentFrame + 1);
   }
 
   const points = [
     [0, 0],
-    [400, 300],
-    [300, 400],
-    [600, 600]
+    [400, 100],
+    [100, 400],
+    [1500, 800]
   ];
-  
-  const interp = new CurveInterpolator(points, { tension: 0.2, alpha: 0.9 });
-  
+
+  const data = [
+    [25, 50],
+    [50, 75],
+    [75, 80],
+    [100, 40],
+    [125, 30],
+    [150, 60],
+    [175, 50]
+  ];
+
+  const interp = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+
   // get points evently distributed along the curve
-  const segments = 1000;
+  const segments = 300;
   const pts = interp.getPoints(segments);
 
   // console.log(pts)
   let curvLine = [];
-  for (let i = 0; i < segments; i++) {
+  for (let i = 0; i < segments - 2; i++) {
     curvLine.push(
-      <div key={"curve" + i} style={{backgroundColor: "black", top: `${pts[i][1]}px`, left: `${pts[i][0]}px`, width: 1, height: 1, position: "absolute", zIndex: 1000}}>
-      </div>
+      <NaturalCurve key={"curveLine" + i} data={[[pts[i][0], pts[i][1]], [pts[i + 1][0], pts[i + 1][1]]]} showPoints={false} />
     );
   }
 
@@ -397,12 +425,12 @@ function AnimationPage({
               >
                 {!fullScreenFlag ? <MaximizeIcon /> : <MinimizeIcon />}
               </div>
-              <div style={{width: 20}} />
+              <div style={{ width: 20 }} />
               {
                 rows
               }
               {
-                curvLine
+                // curvLine
               }
               <div className="filmButton" onClick={makeNewFrame}>
                 <FilmIcon />
@@ -429,7 +457,7 @@ function AnimationPage({
             />
             <div id="new-circles" style={(drawTool !== 0) ? { pointerEvents: 'none' } : {}}>
               {
-                newCircles?.map((item, index) => {
+                eachFrameCircle?.map((item, index) => {
                   const defaultStyle = { top: `${item?.mousePosY * (imgWidth / item?.imgWidth) - positionCircleDiff}px`, left: `${item?.mousePosX * (imgWidth / item?.imgWidth) - positionCircleDiff}px` }
                   const dragStyle = { top: `${mousePosY - positionCircleDiff}px`, left: `${mousePosX - positionCircleDiff}px` }
                   var contextFlag = false
@@ -561,6 +589,10 @@ function AnimationPage({
             </div>
             <SceneWithDrawables width={imgWidth} height={imgHeight} drawTool={drawTool} color={"green"}
               drawables={drawables} setDrawables={setDrawables} drawToolMenuFlag={drawToolMenuFlag} />
+
+            {/* <svg width={imgWidth} height={imgHeight} xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", top: 0, left: 0, zIndex: 100 }}>
+              {curvLine}
+            </svg> */}
           </div>
           <div className="button-line">
             <div className="circles">
