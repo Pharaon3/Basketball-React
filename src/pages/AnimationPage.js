@@ -174,7 +174,26 @@ function AnimationPage({
     const releasingId = dragCircleItem > -1 ? dragCircleItem : eachFrameCircle?.length - 1
     const nextNewCircles = eachFrameCircle?.map((item, index) => {
       if (index === releasingId) {
-        return {
+        if(currentFrame){
+          if(newCircles[currentFrame - 1][index]){
+            var oldOne = newCircles[currentFrame - 1][index]
+            var oldX = oldOne["mousePosX"] / oldOne["mousePosX"]
+            var oldY = oldOne["mousePosY"] / oldOne["mousePosY"]
+            var newX = mousePosX / imgWidth
+            var newY = mousePosY / imgHeight
+            return {
+              ...item,
+              mousePosX: mousePosX,
+              mousePosY: mousePosY,
+              imgWidth: imgWidth,
+              middleX1: (newX - oldX) * 0.3 + oldX,
+              middleX2: (newX - oldX) * 0.7 + oldX,
+              middleY1: (newY - oldY) * 0.3 + oldY,
+              middleY2: (newY - oldY) * 0.7 + oldY
+            };
+          }
+        }
+        else return {
           ...item,
           mousePosX: mousePosX,
           mousePosY: mousePosY,
@@ -188,7 +207,7 @@ function AnimationPage({
     newCircles[currentFrame] = nextNewCircles;    
     setNewCircles(nextNewCircles1);
     setDragCircleItem(-2)
-    // console.log(newCircles)
+    console.log(newCircles)
   }
   const pointPicked = (creatingFlag, index, color) => {
     setDragPointItem(index)
