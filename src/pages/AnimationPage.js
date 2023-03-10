@@ -76,10 +76,11 @@ function AnimationPage({
   const [drawToolMenuFlag, setDrawToolMenuFlag] = useState(false)
   const [drawTool, setDrawTool] = useState(0)
   const [drawables, setDrawables] = useState([])
-  const [frame, setFrame] = useState(0);
-  const [currentFrame, setCurrentFrame] = useState(0);
-  const [eachFrameCircle, setEachFrameCircle] = useState([]);
+  const [frame, setFrame] = useState(0)
+  const [currentFrame, setCurrentFrame] = useState(0)
+  const [eachFrameCircle, setEachFrameCircle] = useState([])
   const [allCircleData, setAllCircleData] = useState([])
+  const [circleTrack, setCircleTrack] = useState([])
 
   useEffect(() => {
     if (!document.mozFullScreen && !document.webkitIsFullScreen)
@@ -184,19 +185,10 @@ function AnimationPage({
     })
     setEachFrameCircle(nextNewCircles);
     var nextNewCircles1 = newCircles;
-    nextNewCircles1?.map((item, index) => {
-      console.log("item: ", item);
-      console.log("index: ", index);
-      if(index === currentFrame){
-        nextNewCircles1[index] = eachFrameCircle;
-      }
-      else return item
-    })
+    newCircles[currentFrame] = nextNewCircles;    
     setNewCircles(nextNewCircles1);
-    console.log("eachFrameCircle", eachFrameCircle);
-    console.log("newCircles", newCircles);
-    console.log("currentFrame", currentFrame);
     setDragCircleItem(-2)
+    // console.log(newCircles)
   }
   const pointPicked = (creatingFlag, index, color) => {
     setDragPointItem(index)
@@ -331,7 +323,12 @@ function AnimationPage({
   let rows = [];
   for (let i = 0; i <= frame; i++) {
     rows.push(
-      <div key={"frame" + i} className="filmButton" onClick={() => navigate("/animation")}>
+      <div key={"frame" + i} className="filmButton" onClick={() => {
+        setCurrentFrame(i)
+        if(newCircles.length < i + 1) newCircles.push(eachFrameCircle)
+        setEachFrameCircle(newCircles[i])
+
+      }}>
         <FilmIcon />
         <div>{i}</div>
       </div>
@@ -341,6 +338,8 @@ function AnimationPage({
   const makeNewFrame = () => {
     setFrame(frame + 1);
     setCurrentFrame(currentFrame + 1);
+    if(newCircles.length < currentFrame + 1) newCircles.push(eachFrameCircle)
+    setEachFrameCircle(newCircles[currentFrame])
   }
 
   const points = [
@@ -463,7 +462,7 @@ function AnimationPage({
                   var contextFlag = false
                   return (
                     <div className={'circle ' + item?.color} key={"new-circle-" + index}
-                      style={(dragCircleItem === index || (dragCircleItem === -1 && index === newCircles?.length - 1)) ? dragStyle : defaultStyle}
+                      style={(dragCircleItem === index || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1)) ? dragStyle : defaultStyle}
                       // style={defaultStyle}
                       onMouseDown={(e) => {
                         if (e.button === 2) return
@@ -487,7 +486,7 @@ function AnimationPage({
                       {item?.number}
                       <div className={(dropMenuItem === index) ? "drop-menu" : "hidden"}>
                         <p>Number <input min={1} type="number" value={item?.number} onChange={(e) => {
-                          const nextNewCircles = newCircles?.map((itemM, indexX) => {
+                          const nexteachFrameCircle = eachFrameCircle?.map((itemM, indexX) => {
                             if (indexX === index) {
                               return {
                                 ...itemM,
@@ -496,10 +495,13 @@ function AnimationPage({
                             }
                             else return itemM
                           })
+                          setEachFrameCircle(nexteachFrameCircle)
+                          var nextNewCircles = newCircles
+                          nextNewCircles[currentFrame] = nexteachFrameCircle
                           setNewCircles(nextNewCircles)
                         }} /></p>
                         <p>Name   <input value={item?.name} onChange={(e) => {
-                          const nextNewCircles = newCircles?.map((itemM, indexX) => {
+                          const nexteachFrameCircle = eachFrameCircle?.map((itemM, indexX) => {
                             if (indexX === index) {
                               return {
                                 ...itemM,
@@ -508,16 +510,27 @@ function AnimationPage({
                             }
                             else return itemM
                           })
+                          setEachFrameCircle(nexteachFrameCircle)
+                          var nextNewCircles = newCircles
+                          nextNewCircles[currentFrame] = nexteachFrameCircle
                           setNewCircles(nextNewCircles)
                         }} /></p>
                         <div className="delete-button" onClick={() => {
                           setDropMenuItem(-1)
-                          setNewCircles([...newCircles?.slice(0, index), ...newCircles?.slice(index + 1)])
+                          var nexteachFrameCircle = [...eachFrameCircle?.slice(0, index), ...eachFrameCircle?.slice(index + 1)]
+                          setEachFrameCircle(nexteachFrameCircle)
+                          var nextNewCircles = newCircles
+                          nextNewCircles[currentFrame] = nexteachFrameCircle
+                          setNewCircles(nextNewCircles)
                         }
                         }
                           onTouchStart={() => {
                             setDropMenuItem(-1)
-                            setNewCircles([...newCircles?.slice(0, index), ...newCircles?.slice(index + 1)])
+                            var nexteachFrameCircle = [...eachFrameCircle?.slice(0, index), ...eachFrameCircle?.slice(index + 1)]
+                            setEachFrameCircle(nexteachFrameCircle)
+                            var nextNewCircles = newCircles
+                            nextNewCircles[currentFrame] = nexteachFrameCircle
+                            setNewCircles(nextNewCircles)
                           }}>Delete</div>
                       </div>
                       <div className="name">{item?.name}</div>

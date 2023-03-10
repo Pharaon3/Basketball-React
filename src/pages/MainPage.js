@@ -172,6 +172,7 @@ function MainPage({
     })
     setNewCircles(nextNewCircles)
     setDragCircleItem(-2)
+    console.log(newCircles)
   }
   const pointPicked = (creatingFlag, index, color) => {
     setDragPointItem(index)
