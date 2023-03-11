@@ -147,9 +147,17 @@ function AnimationPage({
   }
   /////////////////////////////////////////////////////////////////////////////////
   const circlePicked = (creatingFlag, index, color) => {
+    console.log("creatingFlag", creatingFlag)
+    console.log("index", index)
+    console.log("color", color)
+    console.log("currentFrame", currentFrame)
+    console.log("frame", frame)
+    console.log("eachFrameCircle", eachFrameCircle)
+    console.log("newCircle", newCircles)
     if (dropMenuItem > -1) return
     setDragCircleItem(index)
     setDropMenuItem(-1)
+    let newEachFrameCircle = eachFrameCircle
     if (creatingFlag) {
       var tempCurrentId = colorArray.indexOf(color)
       const newObject = {
@@ -158,10 +166,25 @@ function AnimationPage({
         name: "",
         mousePosX: mousePosX,
         mousePosY: mousePosY,
-        imgWidth: imgWidth
+        imgWidth: imgWidth,
+        middleX1: 0,
+        middleY1: 0,
+        isMiddle: false
       }
-      eachFrameCircle.push(newObject)
-      if(newCircles.length < currentFrame + 1) newCircles.push(eachFrameCircle)
+      newEachFrameCircle.push(newObject)
+      setEachFrameCircle(newEachFrameCircle)
+      // let nextNewCircles = newCircles
+      // nextNewCircles[currentFrame] = newEachFrameCircle
+      const nextNewCircles = newCircles.map((item, index) => {
+        if(index === currentFrame){
+          return newEachFrameCircle
+        }
+        else {
+          return item
+        }
+      })
+      setNewCircles(nextNewCircles)
+      // if(newCircles.length < currentFrame + 1) newCircles.push(eachFrameCircle)
       const nextCurrentNumbers = currentNumbers.map((item, index) => {
         if (index !== tempCurrentId) return item;
         else return item + 1
@@ -171,24 +194,64 @@ function AnimationPage({
   }
   const circleReleased = () => {
     if (dragCircleItem === -2) return
+    console.log("currentFrame", currentFrame)
+    console.log("frame", frame)
+    console.log("eachFrameCircle", eachFrameCircle)
+    console.log("newCircle", newCircles)
+    console.log("dragCircleItem", dragCircleItem)
     const releasingId = dragCircleItem > -1 ? dragCircleItem : eachFrameCircle?.length - 1
-    const nextNewCircles = eachFrameCircle?.map((item, index) => {
+    const newEachFrameCircle = eachFrameCircle?.map((item, index) => {
       if (index === releasingId) {
-        return {
-          ...item,
-          mousePosX: mousePosX,
-          mousePosY: mousePosY,
-          imgWidth: imgWidth
-        };
+        if (currentFrame > 0){
+          console.log("(newCircles[currentFrame - 1].length", (newCircles[currentFrame - 1].length))
+          console.log("index", index)
+          if (newCircles[currentFrame - 1].length > index){
+            return {
+              ...item,
+              mousePosX: mousePosX,
+              mousePosY: mousePosY,
+              imgWidth: imgWidth,
+              isMiddle: true,
+              middleX1: 10,
+              middleY1: 10
+            }
+          }
+          else {
+            return {
+              ...item,
+              mousePosX: mousePosX,
+              mousePosY: mousePosY,
+              imgWidth: imgWidth
+            };
+          }
+        }
+        else {
+          return {
+            ...item,
+            mousePosX: mousePosX,
+            mousePosY: mousePosY,
+            imgWidth: imgWidth
+          };
+        }
       }
       else return item
     })
-    setEachFrameCircle(nextNewCircles);
-    var nextNewCircles1 = newCircles;
-    newCircles[currentFrame] = nextNewCircles;    
-    setNewCircles(nextNewCircles1);
+    // let nextNewCircles = eachFrameCircle
+    // nextNewCircles[releasingId]["mousePosX"] = mousePosX
+    // nextNewCircles[releasingId]["mousePosY"] = mousePosY
+    // nextNewCircles[releasingId]["imagWidth"] = imgWidth
+    setEachFrameCircle(newEachFrameCircle);
+    const nextNewCircles = newCircles.map((item, index) => {
+      if(index === currentFrame){
+        return newEachFrameCircle
+      }
+      else {
+        return item
+      }
+    })
+    setNewCircles(nextNewCircles)
     setDragCircleItem(-2)
-    // console.log(newCircles)
+    console.log(newCircles)
   }
   const pointPicked = (creatingFlag, index, color) => {
     setDragPointItem(index)
@@ -248,78 +311,6 @@ function AnimationPage({
     setDragBallItem(-2)
   }
 
-  //////////drawPenciling lines/////////////////////////////////////////
-  // const canvasRef = useRef(null);
-  // const ctxRef = useRef(null);
-  // const [isdrawPenciling, setIsdrawPenciling] = useState(false);
-  // // const [lineWidth, setLineWidth] = useState(5);
-  // // const [lineColor, setLineColor] = useState("blue");
-
-  // const startPencildrawPenciling = (e) => {
-  //   console.log(e)
-  //   if(drawTool!==1) return
-  //   ctxRef.current.beginPath();
-  //   ctxRef.current.moveTo(
-  //     e.nativeEvent.offsetX, 
-  //     e.nativeEvent.offsetY
-  //   );
-  //   setIsdrawPenciling(true);
-  // };
-  // const startPencildrawPencilingByTouch = (e) => {
-  //   console.log(e)
-  //   if(drawTool!==1) return
-  //   ctxRef.current.beginPath();
-  //   var rect = e.target.getBoundingClientRect();
-  //   var x = e.targetTouches[0].pageX - rect.left;
-  //   var y = e.targetTouches[0].pageY - rect.top;
-  //   ctxRef.current.moveTo(x,y);
-  //   setIsdrawPenciling(true);
-  // };
-
-  // // Function for ending the drawPenciling
-  // const endPencildrawPenciling = () => {
-  //   if(drawTool!==1) return
-  //   ctxRef.current.closePath();
-  //   setIsdrawPenciling(false);
-  // };
-
-  // const drawPencil = (e) => {
-  //   if(drawTool!==1) return
-  //   if (!isdrawPenciling) {
-  //     return;
-  //   }
-  //   ctxRef.current.lineTo(
-  //     e.nativeEvent.offsetX, 
-  //     e.nativeEvent.offsetY
-  //   );
-
-  //   ctxRef.current.stroke();
-  // };
-  // const drawPencilByTouch = (e) => {
-  //   if(drawTool!==1) return
-  //   if (!isdrawPenciling) {
-  //     return;
-  //   }
-  //   var rect = e.target.getBoundingClientRect();
-  //   var x = e.targetTouches[0].pageX - rect.left;
-  //   var y = e.targetTouches[0].pageY - rect.top;
-  //   ctxRef.current.lineTo(x,y);
-
-  //   ctxRef.current.stroke();
-  // };
-  // useEffect(() => {
-  //   const canvas = canvasRef.current;
-  //   const ctx = canvas.getContext("2d");
-  //   ctx.lineCap = "round";
-  //   ctx.lineJoin = "round";
-  //   // ctx.strokeStyle = lineColor;
-  //   // ctx.lineWidth = lineWidth;
-  //   ctx.strokeStyle = "blue";
-  //   ctx.lineWidth = 3;
-  //   ctxRef.current = ctx;
-  // // }, [lineColor, lineWidth]);
-  // });
-  /////////////////////////////////////////////////////////////////////////
   let rows = [];
   for (let i = 0; i <= frame; i++) {
     rows.push(
@@ -327,7 +318,6 @@ function AnimationPage({
         setCurrentFrame(i)
         if(newCircles.length < i + 1) newCircles.push(eachFrameCircle)
         setEachFrameCircle(newCircles[i])
-
       }}>
         <FilmIcon />
         <div>{i}</div>
@@ -336,10 +326,12 @@ function AnimationPage({
   }
 
   const makeNewFrame = () => {
-    setFrame(frame + 1);
-    setCurrentFrame(currentFrame + 1);
-    if(newCircles.length < currentFrame + 1) newCircles.push(eachFrameCircle)
-    setEachFrameCircle(newCircles[currentFrame])
+    let letframe = frame
+    let letcurrentFrame = currentFrame
+    setFrame(letframe + 1);
+    setCurrentFrame(letframe + 1);
+    newCircles.push(newCircles[letframe])
+    setEachFrameCircle(newCircles[letframe])
   }
 
   const points = [
