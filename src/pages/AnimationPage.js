@@ -202,37 +202,12 @@ function AnimationPage({
     const releasingId = dragCircleItem > -1 ? dragCircleItem : eachFrameCircle?.length - 1
     const newEachFrameCircle = eachFrameCircle?.map((item, index) => {
       if (index === releasingId) {
-        if (currentFrame > 0){
-          console.log("(newCircles[currentFrame - 1].length", (newCircles[currentFrame - 1].length))
-          console.log("index", index)
-          if (newCircles[currentFrame - 1].length > index){
-            return {
-              ...item,
-              mousePosX: mousePosX,
-              mousePosY: mousePosY,
-              imgWidth: imgWidth,
-              isMiddle: true,
-              middleX1: 10,
-              middleY1: 10
-            }
-          }
-          else {
-            return {
-              ...item,
-              mousePosX: mousePosX,
-              mousePosY: mousePosY,
-              imgWidth: imgWidth
-            };
-          }
-        }
-        else {
-          return {
-            ...item,
-            mousePosX: mousePosX,
-            mousePosY: mousePosY,
-            imgWidth: imgWidth
-          };
-        }
+        return {
+          ...item,
+          mousePosX: mousePosX,
+          mousePosY: mousePosY,
+          imgWidth: imgWidth
+        };
       }
       else return item
     })
