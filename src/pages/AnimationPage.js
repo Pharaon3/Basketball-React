@@ -176,7 +176,7 @@ function AnimationPage({
       // let nextNewCircles = newCircles
       // nextNewCircles[currentFrame] = newEachFrameCircle
       const nextNewCircles = newCircles.map((item, index) => {
-        if(index === currentFrame){
+        if (index === currentFrame) {
           return newEachFrameCircle
         }
         else {
@@ -202,12 +202,37 @@ function AnimationPage({
     const releasingId = dragCircleItem > -1 ? dragCircleItem : eachFrameCircle?.length - 1
     const newEachFrameCircle = eachFrameCircle?.map((item, index) => {
       if (index === releasingId) {
-        return {
-          ...item,
-          mousePosX: mousePosX,
-          mousePosY: mousePosY,
-          imgWidth: imgWidth
-        };
+        if (currentFrame > 0) {
+          console.log("(newCircles[currentFrame - 1].length", (newCircles[currentFrame - 1].length))
+          console.log("index", index)
+          if (newCircles[currentFrame - 1].length > index) {
+            return {
+              ...item,
+              mousePosX: mousePosX,
+              mousePosY: mousePosY,
+              imgWidth: imgWidth,
+              isMiddle: true,
+              middleX1: 10,
+              middleY1: 10
+            }
+          }
+          else {
+            return {
+              ...item,
+              mousePosX: mousePosX,
+              mousePosY: mousePosY,
+              imgWidth: imgWidth
+            };
+          }
+        }
+        else {
+          return {
+            ...item,
+            mousePosX: mousePosX,
+            mousePosY: mousePosY,
+            imgWidth: imgWidth
+          };
+        }
       }
       else return item
     })
@@ -217,7 +242,7 @@ function AnimationPage({
     // nextNewCircles[releasingId]["imagWidth"] = imgWidth
     setEachFrameCircle(newEachFrameCircle);
     const nextNewCircles = newCircles.map((item, index) => {
-      if(index === currentFrame){
+      if (index === currentFrame) {
         return newEachFrameCircle
       }
       else {
@@ -291,7 +316,7 @@ function AnimationPage({
     rows.push(
       <div key={"frame" + i} className="filmButton" onClick={() => {
         setCurrentFrame(i)
-        if(newCircles.length < i + 1) newCircles.push(eachFrameCircle)
+        if (newCircles.length < i + 1) newCircles.push(eachFrameCircle)
         setEachFrameCircle(newCircles[i])
       }}>
         <FilmIcon />
