@@ -147,13 +147,13 @@ function AnimationPage({
   }
   /////////////////////////////////////////////////////////////////////////////////
   const circlePicked = (creatingFlag, index, color) => {
-    console.log("creatingFlag", creatingFlag)
-    console.log("index", index)
-    console.log("color", color)
-    console.log("currentFrame", currentFrame)
-    console.log("frame", frame)
-    console.log("eachFrameCircle", eachFrameCircle)
-    console.log("newCircle", newCircles)
+    // console.log("creatingFlag", creatingFlag)
+    // console.log("index", index)
+    // console.log("color", color)
+    // console.log("currentFrame", currentFrame)
+    // console.log("frame", frame)
+    // console.log("eachFrameCircle", eachFrameCircle)
+    // console.log("newCircle", newCircles)
     if (dropMenuItem > -1) return
     setDragCircleItem(index)
     setDropMenuItem(-1)
@@ -171,10 +171,11 @@ function AnimationPage({
         middleY1: 0,
         isMiddle: false
       }
-      eachFrameCircle.push(newObject)
+      newEachFrameCircle.push(newObject)
       setEachFrameCircle(newEachFrameCircle)
       // let nextNewCircles = newCircles
       // nextNewCircles[currentFrame] = newEachFrameCircle
+      console.log("newEachFrameCircle", newEachFrameCircle)
       const nextNewCircles = newCircles.map((item, index) => {
         if (index === currentFrame) {
           return newEachFrameCircle
@@ -184,6 +185,9 @@ function AnimationPage({
         }
       })
       setNewCircles(nextNewCircles)
+      if(nextNewCircles.length === 0){
+        setNewCircles(newEachFrameCircle)
+      }
       // if(newCircles.length < currentFrame + 1) newCircles.push(eachFrameCircle)
       const nextCurrentNumbers = currentNumbers.map((item, index) => {
         if (index !== tempCurrentId) return item;
@@ -194,16 +198,21 @@ function AnimationPage({
   }
   const circleReleased = () => {
     if (dragCircleItem === -2) return
-    console.log("currentFrame", currentFrame)
-    console.log("frame", frame)
-    console.log("eachFrameCircle", eachFrameCircle)
-    console.log("newCircle", newCircles)
-    console.log("dragCircleItem", dragCircleItem)
+    // console.log("currentFrame", currentFrame)
+    // console.log("frame", frame)
+    // console.log("eachFrameCircle", eachFrameCircle)
+    // console.log("newCircle", newCircles)
+    // console.log("dragCircleItem", dragCircleItem)
     const releasingId = dragCircleItem > -1 ? dragCircleItem : eachFrameCircle?.length - 1
     const newEachFrameCircle = eachFrameCircle?.map((item, index) => {
       if (index === releasingId) {
         if (currentFrame > 0) {
           if (newCircles[currentFrame - 1].length > index) {
+            // console.log("newCircles[currentFrame - 1][index]['mousePosX'] ", newCircles[currentFrame - 1][index]["mousePosX"])
+            // let oldX = newCircles[currentFrame - 1][index]["mousePosX"] / newCircles[currentFrame - 1][index]["imgWidth"]
+            // let oldY = newCircles[currentFrame - 1][index]["mousePosY"] / newCircles[currentFrame - 1][index]["imgWidth"]
+            // let newX = mousePosX / imgWidth
+            // let newY = mousePosY / imgWidth
             return {
               ...item,
               mousePosX: mousePosX,
@@ -234,10 +243,6 @@ function AnimationPage({
       }
       else return item
     })
-    // let nextNewCircles = eachFrameCircle
-    // nextNewCircles[releasingId]["mousePosX"] = mousePosX
-    // nextNewCircles[releasingId]["mousePosY"] = mousePosY
-    // nextNewCircles[releasingId]["imagWidth"] = imgWidth
     setEachFrameCircle(newEachFrameCircle);
     const nextNewCircles = newCircles.map((item, index) => {
       if (index === currentFrame) {
@@ -328,8 +333,13 @@ function AnimationPage({
     let letcurrentFrame = currentFrame   
     setFrame(letframe + 1);
     setCurrentFrame(letframe + 1);
-    newCircles.push(newCircles[letframe])
-    setEachFrameCircle(newCircles[letframe])    
+    if (letframe > 0){
+      newCircles.push(eachFrameCircle)
+    }
+    else {
+      newCircles.push(newCircles[letframe])
+      setEachFrameCircle(newCircles[letframe])
+    }
   }
 
   const points = [
