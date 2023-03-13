@@ -171,7 +171,7 @@ function AnimationPage({
         middleY1: 0,
         isMiddle: false
       }
-      newEachFrameCircle.push(newObject)
+      eachFrameCircle.push(newObject)
       setEachFrameCircle(newEachFrameCircle)
       // let nextNewCircles = newCircles
       // nextNewCircles[currentFrame] = newEachFrameCircle
@@ -203,8 +203,6 @@ function AnimationPage({
     const newEachFrameCircle = eachFrameCircle?.map((item, index) => {
       if (index === releasingId) {
         if (currentFrame > 0) {
-          console.log("(newCircles[currentFrame - 1].length", (newCircles[currentFrame - 1].length))
-          console.log("index", index)
           if (newCircles[currentFrame - 1].length > index) {
             return {
               ...item,
@@ -327,11 +325,11 @@ function AnimationPage({
 
   const makeNewFrame = () => {
     let letframe = frame
-    let letcurrentFrame = currentFrame
+    let letcurrentFrame = currentFrame   
     setFrame(letframe + 1);
     setCurrentFrame(letframe + 1);
     newCircles.push(newCircles[letframe])
-    setEachFrameCircle(newCircles[letframe])
+    setEachFrameCircle(newCircles[letframe])    
   }
 
   const points = [
