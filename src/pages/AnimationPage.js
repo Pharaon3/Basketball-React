@@ -185,7 +185,7 @@ function AnimationPage({
         }
       })
       setNewCircles(nextNewCircles)
-      if(nextNewCircles.length === 0){
+      if (nextNewCircles.length === 0) {
         setNewCircles(newEachFrameCircle)
       }
       // if(newCircles.length < currentFrame + 1) newCircles.push(eachFrameCircle)
@@ -208,19 +208,19 @@ function AnimationPage({
       if (index === releasingId) {
         if (currentFrame > 0) {
           if (newCircles[currentFrame - 1].length > index) {
-            // console.log("newCircles[currentFrame - 1][index]['mousePosX'] ", newCircles[currentFrame - 1][index]["mousePosX"])
-            // let oldX = newCircles[currentFrame - 1][index]["mousePosX"] / newCircles[currentFrame - 1][index]["imgWidth"]
-            // let oldY = newCircles[currentFrame - 1][index]["mousePosY"] / newCircles[currentFrame - 1][index]["imgWidth"]
-            // let newX = mousePosX / imgWidth
-            // let newY = mousePosY / imgWidth
+            console.log("newCircles[currentFrame - 1][index]['mousePosX'] ", newCircles[currentFrame - 1][index]["mousePosX"])
+            let oldX = newCircles[currentFrame - 1][index]["mousePosX"] / newCircles[currentFrame - 1][index]["imgWidth"]
+            let oldY = newCircles[currentFrame - 1][index]["mousePosY"] / newCircles[currentFrame - 1][index]["imgWidth"]
+            let newX = mousePosX / imgWidth
+            let newY = mousePosY / imgWidth
             return {
               ...item,
               mousePosX: mousePosX,
               mousePosY: mousePosY,
               imgWidth: imgWidth,
               isMiddle: true,
-              middleX1: 10,
-              middleY1: 10
+              middleX1: (newX - oldX) * 0.3 + oldX,
+              middleY1: (newY - oldY) * 0.3 + oldY
             }
           }
           else {
@@ -330,10 +330,10 @@ function AnimationPage({
 
   const makeNewFrame = () => {
     let letframe = frame
-    let letcurrentFrame = currentFrame   
+    let letcurrentFrame = currentFrame
     setFrame(letframe + 1);
     setCurrentFrame(letframe + 1);
-    if (letframe > 0){
+    if (letframe > 0) {
       newCircles.push(eachFrameCircle)
     }
     else {
@@ -454,7 +454,43 @@ function AnimationPage({
               src={fieldLineFlag ? fieldLine : fieldWithoutLine}
               alt="BACKGROUND"
             />
+            <svg width={imgWidth} height={imgHeight} xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", top: 0, left: 0 }}>
+              {
+                eachFrameCircle?.map((item, index) => {
+                  // const defaultStyle = { top: `${item?.mousePosY * (imgWidth / item?.imgWidth) - positionCircleDiff}px`, left: `${item?.mousePosX * (imgWidth / item?.imgWidth) - positionCircleDiff}px` }
+                  const dragStyle = { display: 'none' }
+                  var contextFlag = false
+                  if (item.isMiddle) {
+                    const defaultStyle = { top: `${item?.middleY1 * imgWidth - positionCircleDiff}px`, left: `${item?.middleX1 * imgWidth - positionCircleDiff}px` }
+                    let oldOne = newCircles[currentFrame - 1][index]
+                    let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
+                    let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
+                    let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
+                    let y2 = item.mousePosY * imgWidth / item.imgWidth
+                    return (
+                      <line key={"track-" + index} strokeDasharray="4" stroke="#555" x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="3">
+                      </line>
+                    )
+                  }
+                })
+              }
+            </svg>
             <div id="new-circles" style={(drawTool !== 0) ? { pointerEvents: 'none' } : {}}>
+              {
+                eachFrameCircle?.map((item, index) => {
+                  var contextFlag = false
+                  if (item.isMiddle) {
+                    let oldOne = newCircles[currentFrame - 1][index]
+                    const defaultStyle = { top: `${oldOne?.mousePosY * (imgWidth / oldOne?.imgWidth) - positionCircleDiff}px`, left: `${oldOne?.mousePosX * (imgWidth / oldOne?.imgWidth) - positionCircleDiff}px` }
+                    return (
+                      <div className={'circle ' + oldOne?.color} key={"old-circle-" + index} id={"old-circle-" + index}
+                        style={defaultStyle}>
+                        {item?.number}
+                      </div>
+                    )
+                  }
+                })
+              }
               {
                 eachFrameCircle?.map((item, index) => {
                   const defaultStyle = { top: `${item?.mousePosY * (imgWidth / item?.imgWidth) - positionCircleDiff}px`, left: `${item?.mousePosX * (imgWidth / item?.imgWidth) - positionCircleDiff}px` }
@@ -539,6 +575,22 @@ function AnimationPage({
                 })
               }
               {
+                eachFrameCircle?.map((item, index) => {
+                  // const defaultStyle = { top: `${item?.mousePosY * (imgWidth / item?.imgWidth) - positionCircleDiff}px`, left: `${item?.mousePosX * (imgWidth / item?.imgWidth) - positionCircleDiff}px` }
+                  const dragStyle = { display: 'none' }
+                  var contextFlag = false
+                  if (item.isMiddle) {
+                    const defaultStyle = { top: `${item?.middleY1 * imgWidth - positionCircleDiff}px`, left: `${item?.middleX1 * imgWidth - positionCircleDiff}px` }
+                    return (
+                      <div className='circle middle' key={"new-circle-middle-" + index}
+                        style={(dragCircleItem === index || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1)) ? dragStyle : defaultStyle}>
+                        {item?.number}
+                      </div>
+                    )
+                  }
+                })
+              }
+              {
                 newPoints?.map((item, index) => {
                   const defaultStyle = { top: `${item?.mousePosY * (imgWidth / item?.imgWidth) - positionPointDiff}px`, left: `${item?.mousePosX * (imgWidth / item?.imgWidth) - positionPointDiff}px` }
                   const dragStyle = { top: `${mousePosY - positionPointDiff}px`, left: `${mousePosX - positionPointDiff}px` }
@@ -603,9 +655,6 @@ function AnimationPage({
             <SceneWithDrawables width={imgWidth} height={imgHeight} drawTool={drawTool} color={"green"}
               drawables={drawables} setDrawables={setDrawables} drawToolMenuFlag={drawToolMenuFlag} />
 
-            {/* <svg width={imgWidth} height={imgHeight} xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", top: 0, left: 0, zIndex: 100 }}>
-              {curvLine}
-            </svg> */}
           </div>
           <div className="button-line">
             <div className="circles">
