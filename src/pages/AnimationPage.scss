@@ -1,34 +1,40 @@
-.MainPage{
+.MainPage {
     width: 100%;
     padding-top: 20px;
     box-sizing: border-box;
-    .top-user-info{
+
+    .top-user-info {
         display: flex;
         justify-content: flex-end;
         padding: 10px 30px 10px 0px;
         align-items: center;
-        img{
+
+        img {
             width: 100px;
             height: fit-content;
         }
-        .user-avatar{
+
+        .user-avatar {
             margin-left: 10px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             text-align: center;
             color: white;
-            svg{
+
+            svg {
                 // height: 100%;
                 width: auto;
             }
         }
     }
-    .main{
+
+    .main {
         display: flex;
         padding: 0px 10px 0px 10px;
         align-items: center;
-        .board{
+
+        .board {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -37,24 +43,28 @@
             // width: 60%;
             height: fit-content;
             box-sizing: border-box;
-            .image-to-download{
+
+            .image-to-download {
                 position: relative;
                 padding: 10px;
                 box-sizing: border-box;
                 width: fit-content;
                 margin: auto;
-                img{
+
+                img {
                     width: 100%;
                     max-height: calc(100vh - 150px);
                     object-fit: contain;
                 }
-                #new-circles{
+
+                #new-circles {
                     // background-color: aliceblue;
                     // height: 40px;
                     width: 100%;
                     display: flex;
                     align-items: center;
-                    .circle{
+
+                    .circle {
                         position: absolute;
                         z-index: 3;
                         height: 30px;
@@ -66,48 +76,63 @@
                         cursor: pointer;
                         font-weight: 500;
                         color: white;
-                        &.red{
+
+                        &.red {
                             background-color: red;
                             border: 3px solid rgb(255, 124, 124);
                         }
-                        &.blue{
+
+                        &.blue {
                             background-color: blue;
                             border: 3px solid rgb(132, 132, 255);
                         }
-                        &.brown{
+
+                        &.brown {
                             background-color: brown;
                             border: 3px solid rgb(209, 134, 134);
                         }
-                        &.yellow{
+
+                        &.yellow {
                             background-color: yellow;
                             border: 3px solid rgb(255, 255, 125);
                             color: black;
                         }
-                        &.green{
+
+                        &.green {
                             background-color: green;
                             border: 3px solid rgb(86, 170, 86);
                         }
-                        &.white{
+
+                        &.white {
                             background-color: white;
                             border: 3px solid rgb(186, 186, 186);
                             color: black;
                         }
-                        &.grey{
+
+                        &.grey {
                             background-color: grey;
                             border: 3px solid rgb(188, 188, 188);
                         }
-                        &.black{
+
+                        &.black {
                             background-color: black;
                             border: 3px solid rgb(128, 128, 128);
                         }
-                        &.middle{
+
+                        &.middle {
                             background-color: rgb(78, 78, 78);
                             border: 3px solid rgb(255, 255, 255);
                         }
-                        .drop-menu{
+
+                        &.old {
+                            background-color: rgb(131, 131, 131);
+                            border: 3px solid rgb(197, 197, 197);
+                        }
+
+                        .drop-menu {
                             // width: 100px;
                             // height: 100px;
-                            background-color: rgba(43, 44, 75, 0.856);        /////////////////////////////////////////////////
+                            background-color: rgba(43, 44, 75, 0.856); /////////////////////////////////////////////////
                             border-radius: 9px;
                             position: absolute;
                             top: 26px;
@@ -116,12 +141,14 @@
                             width: max-content;
                             z-index: 5;
                             color: white;
-                            p{
+
+                            p {
                                 margin: 0px;
                                 justify-content: space-between;
                                 display: flex;
                                 width: 100%;
-                                input{
+
+                                input {
                                     width: 70px;
                                     margin-left: 5px;
                                     border: none;
@@ -132,9 +159,11 @@
                                     text-align: center;
                                     padding: 1px 3px 1px 3px;
                                 }
+
                                 padding: 2px 0px 2px 0px;
                             }
-                            .delete-button{
+
+                            .delete-button {
                                 background-color: #ffffff28;
                                 margin-top: 2px;
                                 padding: 2px;
@@ -142,12 +171,14 @@
                                 width: 100%;
                                 box-sizing: border-box;
                                 border-radius: 0px 0px 7px 7px;
-                                &:hover{
+
+                                &:hover {
                                     background-color: #ffffff5b;
                                 }
                             }
                         }
-                        .name{
+
+                        .name {
                             position: absolute;
                             bottom: -23px;
                             color: rgb(0, 0, 0);
@@ -156,29 +187,35 @@
                             width: max-content;
                         }
                     }
-                    .point{
+
+                    .point {
                         position: absolute;
                         width: 20px;
                         height: 20px;
                         border-radius: 20px;
                         background-color: #90775c;
                         cursor: pointer;
-                        &.purple{
+
+                        &.purple {
                             background-color: purple;
                             color: black;
                         }
-                        &.orange{
+
+                        &.orange {
                             background-color: orange;
                         }
-                        &.springgreen{
+
+                        &.springgreen {
                             background-color: springgreen;
                             color: black;
                         }
-                        &.cornflowerblue{
+
+                        &.cornflowerblue {
                             background-color: cornflowerblue;
                         }
                     }
-                    .ball{
+
+                    .ball {
                         position: absolute;
                         width: 30px;
                         height: 30px;
@@ -186,14 +223,16 @@
                         cursor: pointer;
                     }
                 }
-                canvas{
+
+                canvas {
                     top: 0px;
                     left: 0px;
                     position: absolute;
                     // background-color: rgba(20, 243, 243, 0.247);
                 }
             }
-            .button-line{
+
+            .button-line {
                 // background-color: aqua;
                 // height: 40px;
                 width: 100%;
@@ -201,10 +240,12 @@
                 display: flex;
                 justify-content: space-between;
                 box-sizing: border-box;
-                .button-group{
+
+                .button-group {
                     display: flex;
                     align-items: center;
-                    .button{
+
+                    .button {
                         cursor: pointer;
                         margin: 0px 5px 0px 5px;
                         width: 40px;
@@ -213,7 +254,8 @@
                         border-radius: 3px;
                         background-color: #90775c;
                         position: relative;
-                        svg{
+
+                        svg {
                             // fill: white;
                             color: white;
                             stroke: white;
@@ -225,18 +267,22 @@
                             left: 50%;
                             transform: translate(-50%, -50%);
                         }
-                        &:hover{
+
+                        &:hover {
                             background-color: white !important;
-                            svg{
+
+                            svg {
                                 color: #90775c;
                                 stroke: #90775c;
                             }
                         }
-                        &.clicked{
+
+                        &.clicked {
                             background-color: #614628;
                         }
                     }
-                    .filmButton{
+
+                    .filmButton {
                         cursor: pointer;
                         margin: 0px 1px 0px 1px;
                         width: 44px;
@@ -245,7 +291,8 @@
                         // border-radius: 3px;
                         background-color: #90775c;
                         position: relative;
-                        svg{
+
+                        svg {
                             // fill: white;
                             color: white;
                             fill: white;
@@ -257,7 +304,8 @@
                             left: 50%;
                             transform: translate(-50%, -50%);
                         }
-                        div{
+
+                        div {
                             font-size: 25px;
                             display: flex;
                             justify-content: center;
@@ -266,7 +314,8 @@
                             height: 100%;
                             color: white;
                         }
-                        .plusIcon{
+
+                        .plusIcon {
                             font-size: 35px;
                             display: flex;
                             justify-content: center;
@@ -275,32 +324,39 @@
                             height: 80%;
                             color: white;
                         }
-                        &:hover{
+
+                        &:hover {
                             background-color: white !important;
-                            svg{
+
+                            svg {
                                 color: #90775c;
                                 fill: #90775c;
                             }
-                            div{
+
+                            div {
                                 color: #90775c;
                             }
                         }
-                        &.clicked{
+
+                        &.clicked {
                             background-color: #614628;
                         }
                     }
-                    .draw-tool-menu{
+
+                    .draw-tool-menu {
                         position: absolute;
                         bottom: 0px;
                     }
                 }
-                .circles{
+
+                .circles {
                     // background-color: aliceblue;
                     // height: 40px;
                     width: 100%;
                     display: flex;
                     align-items: center;
-                    .circle{
+
+                    .circle {
                         height: 30px;
                         width: 30px;
                         border-radius: 40px;
@@ -311,64 +367,78 @@
                         cursor: pointer;
                         font-weight: 500;
                         color: white;
-                        &.red{
+
+                        &.red {
                             background-color: red;
                             border: 3px solid rgb(255, 124, 124);
                         }
-                        &.blue{
+
+                        &.blue {
                             background-color: blue;
                             border: 3px solid rgb(132, 132, 255);
                         }
-                        &.brown{
+
+                        &.brown {
                             background-color: brown;
                             border: 3px solid rgb(209, 134, 134);
                         }
-                        &.yellow{
+
+                        &.yellow {
                             background-color: yellow;
                             border: 3px solid rgb(255, 255, 125);
                             color: black;
                         }
-                        &.green{
+
+                        &.green {
                             background-color: green;
                             border: 3px solid rgb(86, 170, 86);
                         }
-                        &.white{
+
+                        &.white {
                             background-color: white;
                             border: 3px solid rgb(186, 186, 186);
                             color: black;
                         }
-                        &.grey{
+
+                        &.grey {
                             background-color: grey;
                             border: 3px solid rgb(188, 188, 188);
                         }
-                        &.black{
+
+                        &.black {
                             background-color: black;
                             border: 3px solid rgb(128, 128, 128);
                         }
                     }
-                    .point{
+
+                    .point {
                         width: 20px;
                         height: 20px;
                         border-radius: 20px;
                         background-color: #90775c;
                         margin: 0px 5px 0px 5px;
                         cursor: pointer;
-                        &.purple{
+
+                        &.purple {
                             background-color: purple;
                             color: black;
                         }
-                        &.orange{
+
+                        &.orange {
                             background-color: orange;
                         }
-                        &.springgreen{
+
+                        &.springgreen {
                             background-color: springgreen;
                             color: black;
                         }
-                        &.cornflowerblue{
+
+                        &.cornflowerblue {
                             background-color: cornflowerblue;
                         }
                     }
-                    .ball{
+
+                    .ball {
                         width: 30px;
                         height: 30px;
                         border-radius: 30px;
@@ -377,121 +447,145 @@
                 }
             }
         }
-        .roster{
+
+        .roster {
             display: none;
             position: absolute;
             top: 0px;
             left: 0px;
             width: max-content;
             height: 100vh;
-            background-image: linear-gradient(to bottom, #0c0c18, rgba(0,0,0,1));
+            background-image: linear-gradient(to bottom, #0c0c18, rgba(0, 0, 0, 1));
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
             box-sizing: border-box;
-            .table{
-                background-image: linear-gradient(to bottom, rgb(89, 4, 4), rgba(0,0,0,1));
+
+            .table {
+                background-image: linear-gradient(to bottom, rgb(89, 4, 4), rgba(0, 0, 0, 1));
                 width: 100%;
                 max-height: calc(100vh - 10px);
                 overflow-y: scroll;
                 border-top: 1px solid #2b2c4b;
+
                 &::-webkit-scrollbar {
                     background-color: #2b2c4b;
                     width: 8px;
                 }
+
                 &::-webkit-scrollbar-track {
                     box-shadow: 0 0 3px hsl(235, 21%, 11%);
                     border-radius: 10px;
                 }
+
                 &::-webkit-scrollbar-thumb {
-                    background-color: rgb(43,44,75);
+                    background-color: rgb(43, 44, 75);
                     border-radius: 10px;
                 }
+
                 &::-webkit-scrollbar-thumb:hover {
                     background: rgb(91, 92, 121);
                 }
-                .top{
+
+                .top {
                     display: flex;
                     padding: 10px 0px 10px 10px;
                     box-sizing: border-box;
-                    background-color: rgb(13,13,25);
+                    background-color: rgb(13, 13, 25);
                     color: white;
-                    .title{
+
+                    .title {
                         font-size: large;
                         font-weight: 500;
                         border-bottom: 2px solid white;
                         padding-bottom: 5px;
                     }
-                    .list{
+
+                    .list {
                         padding: 10px 0px 0px 0px;
-                        .member{
-                            background-color: rgb(43,44,75);
+
+                        .member {
+                            background-color: rgb(43, 44, 75);
                             min-width: 130px;
                             width: fit-content;
                             padding: 5px 10px 5px 10px;
                             margin: auto;
                             margin-top: 10px;
                             border-radius: 3px;
-                            &:first-child{
+
+                            &:first-child {
                                 margin-top: 0px;
                             }
                         }
-                        .plan{
+
+                        .plan {
                             min-width: 130px;
                             width: fit-content;
                             padding: 3px 8px 3px 8px;
                             margin: auto;
                             margin-top: 10px;
                             border-radius: 3px;
-                            border: 2px solid rgb(43,44,75);
-                            &:first-child{
+                            border: 2px solid rgb(43, 44, 75);
+
+                            &:first-child {
                                 margin-top: 0px;
                             }
                         }
                     }
-                    .left{
+
+                    .left {
                         width: 50%;
                     }
-                    .right{
+
+                    .right {
                         width: 50%;
                     }
                 }
-                .bottom{
+
+                .bottom {
                     display: flex;
                     padding: 10px 0px 10px 10px;
                     box-sizing: border-box;
                     color: white;
                     display: block;
-                    .title{
+
+                    .title {
                         font-size: large;
                         font-weight: 500;
                         border-bottom: 2px solid white;
                         padding-bottom: 5px;
                     }
-                    .columns{
+
+                    .columns {
                         display: flex;
-                        .column{
+
+                        .column {
                             width: 33%;
-                            &:last-child{
+
+                            &:last-child {
                                 width: 34%;
                             }
-                            .sub-title{
+
+                            .sub-title {
                                 font-weight: 500;
                                 padding: 5px 0px 5px 0px;
                                 border-bottom: 2px solid white;
                             }
-                            .list{
+
+                            .list {
                                 padding-top: 10px;
-                                .item{
+
+                                .item {
                                     min-width: 100px;
                                     width: max-content;
                                     padding: 3px 8px 3px 8px;
                                     margin-top: 10px;
                                     border-radius: 3px;
                                     border: 2px solid rgb(99, 15, 15);
-                                    &:first-child{
+
+                                    &:first-child {
                                         margin-top: 0px;
                                     }
                                 }
@@ -500,9 +594,11 @@
                     }
                 }
             }
+
             transition-duration: 0.5s;
             transform: translate(-100%, 0%);
-            &.show{
+
+            &.show {
                 transform: translate(0%, 0%);
             }
         }
@@ -510,74 +606,88 @@
 }
 
 @media only screen and (max-width: 1170px) {
-    .MainPage{
+    .MainPage {
         padding: 0px 5px 0px 5px;
-        .main{
-            .board{
+
+        .main {
+            .board {
                 padding: 0px 5px 0px 0px;
-                .image-to-download{
-                    img{
+
+                .image-to-download {
+                    img {
                         max-height: calc(100vh - 120px);
                     }
-                    #new-circles{
+
+                    #new-circles {
                         // background-color: aliceblue;
                         // height: 40px;
                         width: 100%;
                         display: flex;
                         align-items: center;
-                        .circle{
+
+                        .circle {
                             height: 20px;
                             width: 20px;
                             border-radius: 40px;
-                            .drop-menu{
+
+                            .drop-menu {
                                 top: 20px;
                                 padding: 7px 15px 7px 15px;
                             }
-                            .name{
+
+                            .name {
                                 bottom: -20px;
                             }
                         }
-                        .point{
+
+                        .point {
                             width: 15px;
                             height: 15px;
                             border-radius: 20px;
                         }
-                        .ball{
+
+                        .ball {
                             width: 20px;
                             height: 20px;
                         }
                     }
                 }
-                .button-line{
-                    .button-group{
-                        .button{
+
+                .button-line {
+                    .button-group {
+                        .button {
                             margin: 0px 5px 0px 5px;
                             width: 30px;
                             height: 30px;
                             border: 2.0px solid rgb(255, 255, 255);
                             border-radius: 3px;
-                            svg{
+
+                            svg {
                                 stroke-width: 1.8px;
                                 width: 20px;
                                 height: 20px;
                             }
                         }
                     }
-                    .circles{
+
+                    .circles {
                         width: 100%;
-                        .circle{
+
+                        .circle {
                             height: 20px;
                             width: 20px;
                             border-radius: 40px;
                             margin: 0px 3px 0px 3px;
                         }
-                        .point{
+
+                        .point {
                             width: 15px;
                             height: 15px;
                             border-radius: 20px;
                             margin: 0px 3px 0px 3px;
                         }
-                        .ball{
+
+                        .ball {
                             width: 20px;
                             height: 20px;
                             border-radius: 30px;
@@ -585,49 +695,61 @@
                     }
                 }
             }
-            .roster{
-                .table{
-                    .top{
+
+            .roster {
+                .table {
+                    .top {
                         padding: 5px 0px 5px 5px;
-                        .list{
+
+                        .list {
                             padding: 5px 0px 0px 0px;
-                            .member{
+
+                            .member {
                                 // min-width: 100px;
                                 padding: 3px 5px 3px 5px;
                                 margin-top: 5px;
                                 border-radius: 3px;
                             }
-                            .plan{
+
+                            .plan {
                                 // min-width: 100px;
                                 padding: 2px 4px 2px 4px;
                                 margin-top: 5px;
-                                border: 1px solid rgb(43,44,75);
+                                border: 1px solid rgb(43, 44, 75);
                             }
                         }
                     }
-                    .bottom{
+
+                    .bottom {
                         padding: 5px 0px 5px 5px;
-                        .title{
+
+                        .title {
                             font-size: large;
                             font-weight: 500;
                             border-bottom: 2px solid white;
                             padding-bottom: 3px;
                         }
-                        .columns{
+
+                        .columns {
                             display: flex;
-                            .column{
+
+                            .column {
                                 width: 33%;
-                                &:last-child{
+
+                                &:last-child {
                                     width: 34%;
                                 }
-                                .sub-title{
+
+                                .sub-title {
                                     font-weight: 500;
                                     padding: 5px 0px 5px 0px;
                                     border-bottom: 2px solid white;
                                 }
-                                .list{
+
+                                .list {
                                     padding-top: 5px;
-                                    .item{
+
+                                    .item {
                                         min-width: fit-content;
                                         padding: 3px 5px 3px 5px;
                                         margin-top: 5px;
@@ -640,31 +762,36 @@
                 }
             }
         }
-        
+
     }
 }
 
 @media only screen and (max-width: 872px) {
-    .MainPage{
+    .MainPage {
         padding: 0px 3px 0px 3px;
-        .main{
+
+        .main {
             flex-direction: column;
-            .board{
+
+            .board {
                 padding: 0px 0px 0px 0px;
-                .image-to-download{
-                    img{
+
+                .image-to-download {
+                    img {
                         max-height: calc(100vh - 100px);
                     }
                 }
-                .button-line{
-                    .button-group{
-                        .button{
+
+                .button-line {
+                    .button-group {
+                        .button {
                             margin: 0px 3px 0px 3px;
                             width: 25px;
                             height: 25px;
                             border: 1.7px solid rgb(255, 255, 255);
                             border-radius: 2px;
-                            svg{
+
+                            svg {
                                 stroke-width: 1.7px;
                                 width: 18px;
                                 height: 18px;
@@ -673,6 +800,7 @@
                     }
                 }
             }
+
             // .roster{
             //     width: 100%;
             //     padding: 20px 10px 0px 10px;
@@ -746,56 +874,65 @@
 }
 
 @media only screen and (max-width: 480px) {
-    .MainPage{
-        .main{
-            .board{
-                .image-to-download{
-                    img{
+    .MainPage {
+        .main {
+            .board {
+                .image-to-download {
+                    img {
                         max-height: calc(100vh - 90px);
                     }
-                    #new-circles{
+
+                    #new-circles {
                         // background-color: aliceblue;
                         // height: 40px;
                         width: 100%;
                         display: flex;
                         align-items: center;
-                        .circle{
+
+                        .circle {
                             height: 16px;
                             width: 16px;
                             border-width: 1.8px !important;
-                            .drop-menu{
+
+                            .drop-menu {
                                 top: 15px;
                                 padding: 7px 15px 7px 15px;
                             }
-                            .name{
+
+                            .name {
                                 bottom: -15px;
                                 font-size: small;
                             }
                         }
-                        .point{
+
+                        .point {
                             width: 12px;
                             height: 12px;
                         }
-                        .ball{
+
+                        .ball {
                             width: 16px;
                             height: 16px;
                         }
                     }
                 }
-                .button-line{
-                    .circles{
-                        .circle{
+
+                .button-line {
+                    .circles {
+                        .circle {
                             height: 16px;
                             width: 16px;
                             margin: 0px 2px 0px 2px;
                             border-width: 1.8px !important;
                         }
-                        .point{
+
+                        .point {
                             width: 12px;
                             height: 12px;
                             margin: 0px 2px 0px 2px;
                         }
-                        .ball{
+
+                        .ball {
                             width: 16px;
                             height: 16px;
                         }
@@ -806,14 +943,15 @@
     }
 }
 
-.hidden{
+.hidden {
     display: none;
 }
 
 .marginLeft20 {
     margin-left: 20px !important;
 }
-.curve{
+
+.curve {
     background-color: black;
     width: 1px;
     height: 1px;

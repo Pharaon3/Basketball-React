@@ -79,6 +79,7 @@ function AnimationPage({
   const [frame, setFrame] = useState(0)
   const [currentFrame, setCurrentFrame] = useState(0)
   const [eachFrameCircle, setEachFrameCircle] = useState([])
+  const [isMiddlePicked, setIsMiddlePicked] = useState(0)
   const [allCircleData, setAllCircleData] = useState([])
   const [circleTrack, setCircleTrack] = useState([])
 
@@ -147,13 +148,6 @@ function AnimationPage({
   }
   /////////////////////////////////////////////////////////////////////////////////
   const circlePicked = (creatingFlag, index, color) => {
-    // console.log("creatingFlag", creatingFlag)
-    // console.log("index", index)
-    // console.log("color", color)
-    // console.log("currentFrame", currentFrame)
-    // console.log("frame", frame)
-    // console.log("eachFrameCircle", eachFrameCircle)
-    // console.log("newCircle", newCircles)
     if (dropMenuItem > -1) return
     setDragCircleItem(index)
     setDropMenuItem(-1)
@@ -203,24 +197,72 @@ function AnimationPage({
     // console.log("eachFrameCircle", eachFrameCircle)
     // console.log("newCircle", newCircles)
     // console.log("dragCircleItem", dragCircleItem)
-    const releasingId = dragCircleItem > -1 ? dragCircleItem : eachFrameCircle?.length - 1
-    const newEachFrameCircle = eachFrameCircle?.map((item, index) => {
-      if (index === releasingId) {
-        if (currentFrame > 0) {
-          if (newCircles[currentFrame - 1].length > index) {
-            console.log("newCircles[currentFrame - 1][index]['mousePosX'] ", newCircles[currentFrame - 1][index]["mousePosX"])
-            let oldX = newCircles[currentFrame - 1][index]["mousePosX"] / newCircles[currentFrame - 1][index]["imgWidth"]
-            let oldY = newCircles[currentFrame - 1][index]["mousePosY"] / newCircles[currentFrame - 1][index]["imgWidth"]
-            let newX = mousePosX / imgWidth
-            let newY = mousePosY / imgWidth
+    if (isMiddlePicked) {
+      const releasingId = dragCircleItem > -1 ? dragCircleItem : eachFrameCircle?.length - 1
+      const newEachFrameCircle = eachFrameCircle?.map((item, index) => {
+        if (index === releasingId) {
+          if (currentFrame > 0) {
+            if (newCircles[currentFrame - 1].length > index) {
+              return {
+                ...item,
+                middleX1: mousePosX / imgWidth,
+                middleY1: mousePosY / imgWidth
+              }
+            }
+            else {
+              return {
+                ...item,
+              };
+            }
+          }
+          else {
             return {
               ...item,
-              mousePosX: mousePosX,
-              mousePosY: mousePosY,
-              imgWidth: imgWidth,
-              isMiddle: true,
-              middleX1: (newX - oldX) * 0.3 + oldX,
-              middleY1: (newY - oldY) * 0.3 + oldY
+            };
+          }
+        }
+        else return item
+      })
+      setEachFrameCircle(newEachFrameCircle);
+      const nextNewCircles = newCircles.map((item, index) => {
+        if (index === currentFrame) {
+          return newEachFrameCircle
+        }
+        else {
+          return item
+        }
+      })
+      setNewCircles(nextNewCircles)
+      console.log("isMiddlePicked")
+    }
+    else {
+      const releasingId = dragCircleItem > -1 ? dragCircleItem : eachFrameCircle?.length - 1
+      const newEachFrameCircle = eachFrameCircle?.map((item, index) => {
+        if (index === releasingId) {
+          if (currentFrame > 0) {
+            if (newCircles[currentFrame - 1].length > index) {
+              console.log("newCircles[currentFrame - 1][index]['mousePosX'] ", newCircles[currentFrame - 1][index]["mousePosX"])
+              let oldX = newCircles[currentFrame - 1][index]["mousePosX"] / newCircles[currentFrame - 1][index]["imgWidth"]
+              let oldY = newCircles[currentFrame - 1][index]["mousePosY"] / newCircles[currentFrame - 1][index]["imgWidth"]
+              let newX = mousePosX / imgWidth
+              let newY = mousePosY / imgWidth
+              return {
+                ...item,
+                mousePosX: mousePosX,
+                mousePosY: mousePosY,
+                imgWidth: imgWidth,
+                isMiddle: true,
+                middleX1: (newX - oldX) * 0.3 + oldX,
+                middleY1: (newY - oldY) * 0.3 + oldY
+              }
+            }
+            else {
+              return {
+                ...item,
+                mousePosX: mousePosX,
+                mousePosY: mousePosY,
+                imgWidth: imgWidth
+              };
             }
           }
           else {
@@ -232,27 +274,20 @@ function AnimationPage({
             };
           }
         }
-        else {
-          return {
-            ...item,
-            mousePosX: mousePosX,
-            mousePosY: mousePosY,
-            imgWidth: imgWidth
-          };
+        else return item
+      })
+      setEachFrameCircle(newEachFrameCircle);
+      const nextNewCircles = newCircles.map((item, index) => {
+        if (index === currentFrame) {
+          return newEachFrameCircle
         }
-      }
-      else return item
-    })
-    setEachFrameCircle(newEachFrameCircle);
-    const nextNewCircles = newCircles.map((item, index) => {
-      if (index === currentFrame) {
-        return newEachFrameCircle
-      }
-      else {
-        return item
-      }
-    })
-    setNewCircles(nextNewCircles)
+        else {
+          return item
+        }
+      })
+      setNewCircles(nextNewCircles)
+    }
+    setIsMiddlePicked(0)
     setDragCircleItem(-2)
     console.log(newCircles)
   }
@@ -461,12 +496,15 @@ function AnimationPage({
                   const dragStyle = { display: 'none' }
                   var contextFlag = false
                   if (item.isMiddle) {
-                    const defaultStyle = { top: `${item?.middleY1 * imgWidth - positionCircleDiff}px`, left: `${item?.middleX1 * imgWidth - positionCircleDiff}px` }
                     let oldOne = newCircles[currentFrame - 1][index]
                     let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
                     let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
                     let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
                     let y2 = item.mousePosY * imgWidth / item.imgWidth
+                    if (dragCircleItem === index || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1)) {
+                      x2 = mousePosX
+                      y2 = mousePosY
+                    }
                     return (
                       <line key={"track-" + index} strokeDasharray="4" stroke="#555" x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="3">
                       </line>
@@ -483,8 +521,7 @@ function AnimationPage({
                     let oldOne = newCircles[currentFrame - 1][index]
                     const defaultStyle = { top: `${oldOne?.mousePosY * (imgWidth / oldOne?.imgWidth) - positionCircleDiff}px`, left: `${oldOne?.mousePosX * (imgWidth / oldOne?.imgWidth) - positionCircleDiff}px` }
                     return (
-                      <div className={'circle ' + oldOne?.color} key={"old-circle-" + index} id={"old-circle-" + index}
-                        style={defaultStyle}>
+                      <div className={'circle old'} key={"old-circle-" + index} id={"old-circle-" + index} style={defaultStyle}>
                         {item?.number}
                       </div>
                     )
@@ -498,7 +535,7 @@ function AnimationPage({
                   var contextFlag = false
                   return (
                     <div className={'circle ' + item?.color} key={"new-circle-" + index}
-                      style={(dragCircleItem === index || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1)) ? dragStyle : defaultStyle}
+                      style={(dragCircleItem === index && !isMiddlePicked || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1  && !isMiddlePicked)) ? dragStyle : defaultStyle}
                       // style={defaultStyle}
                       onMouseDown={(e) => {
                         if (e.button === 2) return
@@ -576,14 +613,24 @@ function AnimationPage({
               }
               {
                 eachFrameCircle?.map((item, index) => {
-                  // const defaultStyle = { top: `${item?.mousePosY * (imgWidth / item?.imgWidth) - positionCircleDiff}px`, left: `${item?.mousePosX * (imgWidth / item?.imgWidth) - positionCircleDiff}px` }
-                  const dragStyle = { display: 'none' }
+                  const dragStyle = { top: `${mousePosY - positionCircleDiff}px`, left: `${mousePosX - positionCircleDiff}px` }
+                  // const dragStyle = { display: 'none' }
                   var contextFlag = false
                   if (item.isMiddle) {
                     const defaultStyle = { top: `${item?.middleY1 * imgWidth - positionCircleDiff}px`, left: `${item?.middleX1 * imgWidth - positionCircleDiff}px` }
                     return (
                       <div className='circle middle' key={"new-circle-middle-" + index}
-                        style={(dragCircleItem === index || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1)) ? dragStyle : defaultStyle}>
+                        style={(dragCircleItem === index && isMiddlePicked || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1 && isMiddlePicked)) ? dragStyle : defaultStyle}                        
+                        onMouseDown={(e) => {
+                          if (e.button === 2) return
+                          setIsMiddlePicked(1)
+                          circlePicked(false, index, "")
+                        }}
+                        onTouchStart={() => {
+                          if (contextFlag) return
+                          setIsMiddlePicked(1)
+                          circlePicked(false, index, "")
+                        }}>
                         {item?.number}
                       </div>
                     )
