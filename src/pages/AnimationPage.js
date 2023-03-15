@@ -83,6 +83,7 @@ function AnimationPage({
   const [allCircleData, setAllCircleData] = useState([])
   const [circleTrack, setCircleTrack] = useState([])
   const [isPlay, setIsPlay] = useState(false)
+  const [circleId, setCircleId] = useState(0)
 
   useEffect(() => {
     if (!document.mozFullScreen && !document.webkitIsFullScreen)
@@ -156,6 +157,7 @@ function AnimationPage({
     if (creatingFlag) {
       var tempCurrentId = colorArray.indexOf(color)
       const newObject = {
+        id: circleId,
         color: color,
         number: currentNumbers[tempCurrentId],
         name: "",
@@ -168,13 +170,17 @@ function AnimationPage({
         middleY2: 0,
         isMiddle: false
       }
+      setCircleId(circleId + 1)
       newEachFrameCircle.push(newObject)
       setEachFrameCircle(newEachFrameCircle)
-      // let nextNewCircles = newCircles
-      // nextNewCircles[currentFrame] = newEachFrameCircle
       const nextNewCircles = newCircles.map((item, index) => {
         if (index === currentFrame) {
           return newEachFrameCircle
+        }
+        else if (index > currentFrame) {
+          let letItem = new Array()
+          letItem = [...item, newObject]
+          return [...item, newObject]
         }
         else {
           return item
@@ -184,7 +190,6 @@ function AnimationPage({
       if (nextNewCircles.length === 0) {
         setNewCircles(newEachFrameCircle)
       }
-      // if(newCircles.length < currentFrame + 1) newCircles.push(eachFrameCircle)
       const nextCurrentNumbers = currentNumbers.map((item, index) => {
         if (index !== tempCurrentId) return item;
         else return item + 1
@@ -358,6 +363,7 @@ function AnimationPage({
   for (let i = 0; i <= frame; i++) {
     rows.push(
       <div key={"frame" + i} className="filmButton" onClick={() => {
+        console.log("newCircles", newCircles)
         setCurrentFrame(i)
         if (newCircles.length < i + 1) newCircles.push(eachFrameCircle)
         setEachFrameCircle(newCircles[i])
@@ -618,7 +624,7 @@ function AnimationPage({
               {
                 eachFrameCircle?.map((item, index) => {
                   let playPosX = 0, playPosY = 0
-                  if(item.isMiddle && isPlay){
+                  if (item.isMiddle && isPlay) {
                     playPosX = playPos[index][count][0]
                     playPosY = playPos[index][count][1]
                   }
