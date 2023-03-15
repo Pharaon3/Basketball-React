@@ -171,7 +171,6 @@ function AnimationPage({
       setEachFrameCircle(newEachFrameCircle)
       // let nextNewCircles = newCircles
       // nextNewCircles[currentFrame] = newEachFrameCircle
-      console.log("newEachFrameCircle", newEachFrameCircle)
       const nextNewCircles = newCircles.map((item, index) => {
         if (index === currentFrame) {
           return newEachFrameCircle
@@ -239,7 +238,6 @@ function AnimationPage({
         }
       })
       setNewCircles(nextNewCircles)
-      console.log("isMiddlePicked")
     }
     else {
       const releasingId = dragCircleItem > -1 ? dragCircleItem : eachFrameCircle?.length - 1
@@ -247,7 +245,6 @@ function AnimationPage({
         if (index === releasingId) {
           if (currentFrame > 0) {
             if (newCircles[currentFrame - 1].length > index) {
-              console.log("newCircles[currentFrame - 1][index]['mousePosX'] ", newCircles[currentFrame - 1][index]["mousePosX"])
               let oldX = newCircles[currentFrame - 1][index]["mousePosX"] / newCircles[currentFrame - 1][index]["imgWidth"]
               let oldY = newCircles[currentFrame - 1][index]["mousePosY"] / newCircles[currentFrame - 1][index]["imgWidth"]
               let newX = mousePosX / imgWidth
@@ -297,7 +294,6 @@ function AnimationPage({
     }
     setIsMiddlePicked(0)
     setDragCircleItem(-2)
-    console.log(newCircles)
   }
   const pointPicked = (creatingFlag, index, color) => {
     setDragPointItem(index)
@@ -376,12 +372,23 @@ function AnimationPage({
     let letcurrentFrame = currentFrame
     setFrame(letframe + 1);
     setCurrentFrame(letframe + 1);
-    if (letframe > 0) {
+    if (letframe === 0) {
       newCircles.push(eachFrameCircle)
     }
     else {
-      newCircles.push(newCircles[letframe])
-      setEachFrameCircle(newCircles[letframe])
+      const lastFrame = newCircles[letframe]?.map((item, index) => {
+        return{
+          ...item,
+          isMiddle: false,
+          middleX1: 0,
+          middleX2: 0,
+          middleY1: 0,
+          middleY2: 0
+        }
+      })
+      console.log("lastFrame", lastFrame)
+      newCircles.push(lastFrame)
+      setEachFrameCircle(lastFrame)
     }
   }
 
@@ -408,7 +415,6 @@ function AnimationPage({
   const segments = 100;
   // const pts = interp.getPoints(segments);
 
-  // console.log(pts)
   // let curvLine = [];
   // for (let i = 0; i < segments - 2; i++) {
   //   curvLine.push(
