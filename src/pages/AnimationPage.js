@@ -163,6 +163,8 @@ function AnimationPage({
         imgWidth: imgWidth,
         middleX1: 0,
         middleY1: 0,
+        middleX2: 0,
+        middleY2: 0,
         isMiddle: false
       }
       newEachFrameCircle.push(newObject)
@@ -192,21 +194,25 @@ function AnimationPage({
   }
   const circleReleased = () => {
     if (dragCircleItem === -2) return
-    // console.log("currentFrame", currentFrame)
-    // console.log("frame", frame)
-    // console.log("eachFrameCircle", eachFrameCircle)
-    // console.log("newCircle", newCircles)
-    // console.log("dragCircleItem", dragCircleItem)
     if (isMiddlePicked) {
       const releasingId = dragCircleItem > -1 ? dragCircleItem : eachFrameCircle?.length - 1
       const newEachFrameCircle = eachFrameCircle?.map((item, index) => {
         if (index === releasingId) {
           if (currentFrame > 0) {
             if (newCircles[currentFrame - 1].length > index) {
-              return {
-                ...item,
-                middleX1: mousePosX / imgWidth,
-                middleY1: mousePosY / imgWidth
+              if (isMiddlePicked == 1) {
+                return {
+                  ...item,
+                  middleX1: mousePosX / imgWidth,
+                  middleY1: mousePosY / imgWidth
+                }
+              }
+              if (isMiddlePicked == 2) {
+                return {
+                  ...item,
+                  middleX2: mousePosX / imgWidth,
+                  middleY2: mousePosY / imgWidth
+                }
               }
             }
             else {
@@ -253,7 +259,9 @@ function AnimationPage({
                 imgWidth: imgWidth,
                 isMiddle: true,
                 middleX1: (newX - oldX) * 0.3 + oldX,
-                middleY1: (newY - oldY) * 0.3 + oldY
+                middleY1: (newY - oldY) * 0.3 + oldY,
+                middleX2: (newX - oldX) * 0.7 + oldX,
+                middleY2: (newY - oldY) * 0.7 + oldY
               }
             }
             else {
@@ -377,36 +385,36 @@ function AnimationPage({
     }
   }
 
-  const points = [
-    [0, 0],
-    [400, 100],
-    [100, 400],
-    [1500, 800]
-  ];
+  // const points = [
+  //   [0, 0],
+  //   [400, 100],
+  //   [100, 400],
+  //   [1500, 800]
+  // ];
 
-  const data = [
-    [25, 50],
-    [50, 75],
-    [75, 80],
-    [100, 40],
-    [125, 30],
-    [150, 60],
-    [175, 50]
-  ];
+  // const data = [
+  //   [25, 50],
+  //   [50, 75],
+  //   [75, 80],
+  //   [100, 40],
+  //   [125, 30],
+  //   [150, 60],
+  //   [175, 50]
+  // ];
 
-  const interp = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+  // const interp = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
 
   // get points evently distributed along the curve
-  const segments = 300;
-  const pts = interp.getPoints(segments);
+  const segments = 100;
+  // const pts = interp.getPoints(segments);
 
   // console.log(pts)
-  let curvLine = [];
-  for (let i = 0; i < segments - 2; i++) {
-    curvLine.push(
-      <NaturalCurve key={"curveLine" + i} data={[[pts[i][0], pts[i][1]], [pts[i + 1][0], pts[i + 1][1]]]} showPoints={false} />
-    );
-  }
+  // let curvLine = [];
+  // for (let i = 0; i < segments - 2; i++) {
+  //   curvLine.push(
+  //     <NaturalCurve key={"curveLine" + i} data={[[pts[i][0], pts[i][1]], [pts[i + 1][0], pts[i + 1][1]]]} showPoints={false} />
+  //   );
+  // }
 
   return (
     <div className="MainPage">
@@ -501,13 +509,46 @@ function AnimationPage({
                     let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
                     let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
                     let y2 = item.mousePosY * imgWidth / item.imgWidth
+                    let xm1 = item.middleX1 * imgWidth
+                    let ym1 = item.middleY1 * imgWidth
+                    let xm2 = item.middleX2 * imgWidth
+                    let ym2 = item.middleY2 * imgWidth
                     if (dragCircleItem === index || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1)) {
-                      x2 = mousePosX
-                      y2 = mousePosY
+                      if (isMiddlePicked == 1) {
+                        xm1 = mousePosX
+                        ym1 = mousePosY
+                      }
+                      else if (isMiddlePicked == 2) {
+                        xm2 = mousePosX
+                        ym2 = mousePosY
+                      }
+                      else {
+                        x2 = mousePosX
+                        y2 = mousePosY
+                      }
+                    }
+                    const points = [
+                      [x1, y1],
+                      [xm1, ym1],
+                      [xm2, ym2],
+                      [x2, y2]
+                    ];
+                    let curvLine = [];
+                    const interp = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+                    const pts = interp.getPoints(segments);
+                    for (let i = 0; i < segments - 2; i++) {
+                      curvLine.push(
+                        <NaturalCurve strokeDasharray="5" key={"curveLine" + i} data={[[pts[i][0], pts[i][1]], [pts[i + 1][0], pts[i + 1][1]]]} showPoints={false} />
+                      );
                     }
                     return (
-                      <line key={"track-" + index} strokeDasharray="4" stroke="#555" x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="3">
-                      </line>
+                      <g key={"track-" + index}>
+                        {/* <line strokeDasharray="4" stroke="#555" x1={x1} y1={y1} x2={xm} y2={ym} strokeWidth="3">
+                        </line>
+                        <line strokeDasharray="4" stroke="#555" x1={xm} y1={ym} x2={x2} y2={y2} strokeWidth="3">
+                        </line> */}
+                        {curvLine}
+                      </g>
                     )
                   }
                 })
@@ -535,7 +576,7 @@ function AnimationPage({
                   var contextFlag = false
                   return (
                     <div className={'circle ' + item?.color} key={"new-circle-" + index}
-                      style={(dragCircleItem === index && !isMiddlePicked || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1  && !isMiddlePicked)) ? dragStyle : defaultStyle}
+                      style={(dragCircleItem === index && !isMiddlePicked || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1 && !isMiddlePicked)) ? dragStyle : defaultStyle}
                       // style={defaultStyle}
                       onMouseDown={(e) => {
                         if (e.button === 2) return
@@ -617,21 +658,38 @@ function AnimationPage({
                   // const dragStyle = { display: 'none' }
                   var contextFlag = false
                   if (item.isMiddle) {
-                    const defaultStyle = { top: `${item?.middleY1 * imgWidth - positionCircleDiff}px`, left: `${item?.middleX1 * imgWidth - positionCircleDiff}px` }
+                    const defaultStyle1 = { top: `${item?.middleY1 * imgWidth - positionCircleDiff}px`, left: `${item?.middleX1 * imgWidth - positionCircleDiff}px` }
+                    const defaultStyle2 = { top: `${item?.middleY2 * imgWidth - positionCircleDiff}px`, left: `${item?.middleX2 * imgWidth - positionCircleDiff}px` }
                     return (
-                      <div className='circle middle' key={"new-circle-middle-" + index}
-                        style={(dragCircleItem === index && isMiddlePicked || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1 && isMiddlePicked)) ? dragStyle : defaultStyle}                        
-                        onMouseDown={(e) => {
-                          if (e.button === 2) return
-                          setIsMiddlePicked(1)
-                          circlePicked(false, index, "")
-                        }}
-                        onTouchStart={() => {
-                          if (contextFlag) return
-                          setIsMiddlePicked(1)
-                          circlePicked(false, index, "")
-                        }}>
-                        {item?.number}
+                      <div key={"new-circle-middle-" + index}>
+                        <div className='circle middle'
+                          style={(dragCircleItem === index && isMiddlePicked === 1 || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1 && isMiddlePicked === 1)) ? dragStyle : defaultStyle1}
+                          onMouseDown={(e) => {
+                            if (e.button === 2) return
+                            setIsMiddlePicked(1)
+                            circlePicked(false, index, "")
+                          }}
+                          onTouchStart={() => {
+                            if (contextFlag) return
+                            setIsMiddlePicked(1)
+                            circlePicked(false, index, "")
+                          }}>
+                          {item?.number}
+                        </div>
+                        <div className='circle middle'
+                          style={(dragCircleItem === index && isMiddlePicked === 2 || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1 && isMiddlePicked === 2)) ? dragStyle : defaultStyle2}
+                          onMouseDown={(e) => {
+                            if (e.button === 2) return
+                            setIsMiddlePicked(2)
+                            circlePicked(false, index, "")
+                          }}
+                          onTouchStart={() => {
+                            if (contextFlag) return
+                            setIsMiddlePicked(2)
+                            circlePicked(false, index, "")
+                          }}>
+                          {item?.number}
+                        </div>
                       </div>
                     )
                   }
