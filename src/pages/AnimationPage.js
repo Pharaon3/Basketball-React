@@ -204,7 +204,8 @@ function AnimationPage({
       const newEachFrameCircle = eachFrameCircle?.map((item, index) => {
         if (index === releasingId) {
           if (currentFrame > 0) {
-            if (newCircles[currentFrame - 1].length > index) {
+            let lastIndex = canMiddle(item.id)
+            if (lastIndex !== false) {
               if (isMiddlePicked == 1) {
                 return {
                   ...item,
@@ -250,9 +251,10 @@ function AnimationPage({
       const newEachFrameCircle = eachFrameCircle?.map((item, index) => {
         if (index === releasingId) {
           if (currentFrame > 0) {
-            if (newCircles[currentFrame - 1].length > index) {
-              let oldX = newCircles[currentFrame - 1][index]["mousePosX"] / newCircles[currentFrame - 1][index]["imgWidth"]
-              let oldY = newCircles[currentFrame - 1][index]["mousePosY"] / newCircles[currentFrame - 1][index]["imgWidth"]
+            let lastIndex = canMiddle(item.id)
+            if (lastIndex !== false) {
+              let oldX = newCircles[currentFrame - 1][lastIndex]["mousePosX"] / newCircles[currentFrame - 1][lastIndex]["imgWidth"]
+              let oldY = newCircles[currentFrame - 1][lastIndex]["mousePosY"] / newCircles[currentFrame - 1][lastIndex]["imgWidth"]
               let newX = mousePosX / imgWidth
               let newY = mousePosY / imgWidth
               return {
@@ -381,6 +383,7 @@ function AnimationPage({
     setCurrentFrame(letframe + 1);
     if (letframe === 0) {
       newCircles.push(eachFrameCircle)
+      setEachFrameCircle(eachFrameCircle)
     }
     else {
       const lastFrame = newCircles[letframe]?.map((item, index) => {
@@ -393,7 +396,6 @@ function AnimationPage({
           middleY2: 0
         }
       })
-      console.log("lastFrame", lastFrame)
       newCircles.push(lastFrame)
       setEachFrameCircle(lastFrame)
     }
@@ -451,6 +453,15 @@ function AnimationPage({
 
   const stop = () => {
     setIsPlay(false)
+  }
+
+  const canMiddle = (id) => {
+    if (currentFrame == 0) return false
+    let lastFrameCircle = newCircles[currentFrame - 1];
+    for (let i = 0; i < lastFrameCircle.length; i ++){
+      if(lastFrameCircle[i].id === id) return i
+    }
+    return false
   }
 
   return (
@@ -553,7 +564,8 @@ function AnimationPage({
                     const dragStyle = { display: 'none' }
                     var contextFlag = false
                     if (item.isMiddle) {
-                      let oldOne = newCircles[currentFrame - 1][index]
+                      let lastIndex = canMiddle(item.id)
+                      let oldOne = newCircles[currentFrame - 1][lastIndex]
                       let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
                       let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
                       let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
@@ -610,7 +622,8 @@ function AnimationPage({
                   if (!isPlay) {
                     var contextFlag = false
                     if (item.isMiddle) {
-                      let oldOne = newCircles[currentFrame - 1][index]
+                      let lastIndex = canMiddle(item.id)
+                      let oldOne = newCircles[currentFrame - 1][lastIndex]
                       const defaultStyle = { top: `${oldOne?.mousePosY * (imgWidth / oldOne?.imgWidth) - positionCircleDiff}px`, left: `${oldOne?.mousePosX * (imgWidth / oldOne?.imgWidth) - positionCircleDiff}px` }
                       return (
                         <div className={'circle old'} key={"old-circle-" + index} id={"old-circle-" + index} style={defaultStyle}>
