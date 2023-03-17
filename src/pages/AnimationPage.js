@@ -80,8 +80,6 @@ function AnimationPage({
   const [currentFrame, setCurrentFrame] = useState(0)
   const [eachFrameCircle, setEachFrameCircle] = useState([])
   const [isMiddlePicked, setIsMiddlePicked] = useState(0)
-  const [allCircleData, setAllCircleData] = useState([])
-  const [circleTrack, setCircleTrack] = useState([])
   const [isPlay, setIsPlay] = useState(false)
   const [circleId, setCircleId] = useState(0)
 
@@ -248,9 +246,12 @@ function AnimationPage({
     }
     else {
       const releasingId = dragCircleItem > -1 ? dragCircleItem : eachFrameCircle?.length - 1
+      let itemId;
       const newEachFrameCircle = eachFrameCircle?.map((item, index) => {
         if (index === releasingId) {
           if (currentFrame > 0) {
+            itemId = item.id;
+            console.log("released circle id:", itemId)
             let lastIndex = canMiddle(item.id)
             if (lastIndex !== false) {
               let oldX = newCircles[currentFrame - 1][lastIndex]["mousePosX"] / newCircles[currentFrame - 1][lastIndex]["imgWidth"]
@@ -294,6 +295,17 @@ function AnimationPage({
         if (index === currentFrame) {
           return newEachFrameCircle
         }
+        else if (index > currentFrame){
+          let newEachFrameCircle1 = newCircles[index]
+          for (let i = 0; i < newEachFrameCircle1.length; i ++){
+            if(newEachFrameCircle1[i].id === itemId && newEachFrameCircle1[i].isMiddle === false){
+              newEachFrameCircle1[i].mousePosX = mousePosX
+              newEachFrameCircle1[i].mousePosY = mousePosY
+              newEachFrameCircle1[i].imgWidth = imgWidth
+            }
+          }
+          return newEachFrameCircle1
+        }
         else {
           return item
         }
@@ -302,6 +314,7 @@ function AnimationPage({
     }
     setIsMiddlePicked(0)
     setDragCircleItem(-2)
+    console.log("cirle released", newCircles)
   }
   const pointPicked = (creatingFlag, index, color) => {
     setDragPointItem(index)
