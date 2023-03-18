@@ -84,6 +84,7 @@ function AnimationPage({
   const [isPlay, setIsPlay] = useState(false)
   const [isPlayAll, setIsPlayAll] = useState(false)
   const [circleId, setCircleId] = useState(0)
+  const [isPause, setIsPause] = useState(false)
 
 
   useEffect(() => {
@@ -421,117 +422,129 @@ function AnimationPage({
 
   useEffect(() => {
     setTimeout(() => {
-      let letCount = count
-      if (isPlayAll == true && letCount > segments - 1) {
-        let letCurrentFrame = currentFrame
-        let nextFrame = letCurrentFrame > frame - 1 ? 1 : letCurrentFrame + 1
-        let eachFrameCircle2 = newCircles[nextFrame]
-        let letPlayPos = new Array()
-        for (let index = 0; index < eachFrameCircle2.length; index ++) {
-          let item = eachFrameCircle2[index]
-          if (item.isMiddle) {
-            let oldOne = newCircles[nextFrame - 1][index]
-            let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
-            let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
-            let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
-            let y2 = item.mousePosY * imgWidth / item.imgWidth
-            let xm1 = item.middleX1 * imgWidth
-            let ym1 = item.middleY1 * imgWidth
-            let xm2 = item.middleX2 * imgWidth
-            let ym2 = item.middleY2 * imgWidth
-            const points = [
-              [x1, y1],
-              [xm1, ym1],
-              [xm2, ym2],
-              [x2, y2]
-            ];
-            const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
-            const pts1 = interp1.getPoints(segments);
-            letPlayPos.push(pts1)
+      if (!isPause) {
+        let letCount = count
+        if (isPlayAll == true && letCount > segments - 1) {
+          let letCurrentFrame = currentFrame
+          let nextFrame = letCurrentFrame > frame - 1 ? 1 : letCurrentFrame + 1
+          let eachFrameCircle2 = newCircles[nextFrame]
+          let letPlayPos = new Array()
+          for (let index = 0; index < eachFrameCircle2.length; index++) {
+            let item = eachFrameCircle2[index]
+            if (item.isMiddle) {
+              let oldOne = newCircles[nextFrame - 1][index]
+              let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
+              let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
+              let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
+              let y2 = item.mousePosY * imgWidth / item.imgWidth
+              let xm1 = item.middleX1 * imgWidth
+              let ym1 = item.middleY1 * imgWidth
+              let xm2 = item.middleX2 * imgWidth
+              let ym2 = item.middleY2 * imgWidth
+              const points = [
+                [x1, y1],
+                [xm1, ym1],
+                [xm2, ym2],
+                [x2, y2]
+              ];
+              const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+              const pts1 = interp1.getPoints(segments);
+              letPlayPos.push(pts1)
+            }
+            else {
+              letPlayPos.push([item.mousePosX, item.mousePosY])
+            }
           }
-          else {
-            letPlayPos.push([item.mousePosX, item.mousePosY])
-          }
+          setCurrentFrame(nextFrame)
+          setEachFrameCircle(newCircles[nextFrame])
+          setPlayPos(letPlayPos)
         }
-        setCurrentFrame(nextFrame)
-        setEachFrameCircle(newCircles[nextFrame])
-        setPlayPos(letPlayPos)
+        setCount((count) => count > segments - 1 ? 0 : count + 1);
       }
-      setCount((count) => count > segments - 1 ? 0 : count + 1);
     }, 1000);
   });
 
   const play = () => {
-    setIsPlay(true)
-    setCount(0)
-
-    let letPlayPos = new Array()
-    for (let index = 0; index < eachFrameCircle.length; index++) {
-      let item = eachFrameCircle[index]
-      if (item.isMiddle) {
-        let oldOne = newCircles[currentFrame - 1][index]
-        let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
-        let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
-        let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
-        let y2 = item.mousePosY * imgWidth / item.imgWidth
-        let xm1 = item.middleX1 * imgWidth
-        let ym1 = item.middleY1 * imgWidth
-        let xm2 = item.middleX2 * imgWidth
-        let ym2 = item.middleY2 * imgWidth
-        const points = [
-          [x1, y1],
-          [xm1, ym1],
-          [xm2, ym2],
-          [x2, y2]
-        ];
-        const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
-        const pts1 = interp1.getPoints(segments);
-        letPlayPos.push(pts1)
-      }
-      else {
-        letPlayPos.push([item.mousePosX, item.mousePosY])
-      }
+    if (isPause) {
+      setIsPause(false)
     }
-    setPlayPos(letPlayPos)
+    else {
+      setIsPlay(true)
+      setCount(0)
+
+      let letPlayPos = new Array()
+      for (let index = 0; index < eachFrameCircle.length; index++) {
+        let item = eachFrameCircle[index]
+        if (item.isMiddle) {
+          let oldOne = newCircles[currentFrame - 1][index]
+          let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
+          let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
+          let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
+          let y2 = item.mousePosY * imgWidth / item.imgWidth
+          let xm1 = item.middleX1 * imgWidth
+          let ym1 = item.middleY1 * imgWidth
+          let xm2 = item.middleX2 * imgWidth
+          let ym2 = item.middleY2 * imgWidth
+          const points = [
+            [x1, y1],
+            [xm1, ym1],
+            [xm2, ym2],
+            [x2, y2]
+          ];
+          const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+          const pts1 = interp1.getPoints(segments);
+          letPlayPos.push(pts1)
+        }
+        else {
+          letPlayPos.push([item.mousePosX, item.mousePosY])
+        }
+      }
+      setPlayPos(letPlayPos)
+    }
   }
   const playAll = () => {
-    setIsPlay(true)
-    setIsPlayAll(true)
-    setCount(0)
-    setCurrentFrame(1)
-
-    let letPlayPos = new Array()
-    for (let index = 0; index < eachFrameCircle.length; index++) {
-      let item = eachFrameCircle[index]
-      if (item.isMiddle) {
-        let oldOne = newCircles[currentFrame - 1][index]
-        let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
-        let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
-        let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
-        let y2 = item.mousePosY * imgWidth / item.imgWidth
-        let xm1 = item.middleX1 * imgWidth
-        let ym1 = item.middleY1 * imgWidth
-        let xm2 = item.middleX2 * imgWidth
-        let ym2 = item.middleY2 * imgWidth
-        const points = [
-          [x1, y1],
-          [xm1, ym1],
-          [xm2, ym2],
-          [x2, y2]
-        ];
-        const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
-        const pts1 = interp1.getPoints(segments);
-        letPlayPos.push(pts1)
-      }
-      else {
-        letPlayPos.push([item.mousePosX, item.mousePosY])
-      }
+    if (isPause) {
+      setIsPause(false)
     }
-    setPlayPos(letPlayPos)
+    else {
+      setIsPlay(true)
+      setIsPlayAll(true)
+      setCount(0)
+      setCurrentFrame(1)
+
+      let letPlayPos = new Array()
+      for (let index = 0; index < eachFrameCircle.length; index++) {
+        let item = eachFrameCircle[index]
+        if (item.isMiddle) {
+          let oldOne = newCircles[currentFrame - 1][index]
+          let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
+          let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
+          let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
+          let y2 = item.mousePosY * imgWidth / item.imgWidth
+          let xm1 = item.middleX1 * imgWidth
+          let ym1 = item.middleY1 * imgWidth
+          let xm2 = item.middleX2 * imgWidth
+          let ym2 = item.middleY2 * imgWidth
+          const points = [
+            [x1, y1],
+            [xm1, ym1],
+            [xm2, ym2],
+            [x2, y2]
+          ];
+          const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+          const pts1 = interp1.getPoints(segments);
+          letPlayPos.push(pts1)
+        }
+        else {
+          letPlayPos.push([item.mousePosX, item.mousePosY])
+        }
+      }
+      setPlayPos(letPlayPos)
+    }
   }
 
   const pause = () => {
-
+    setIsPause(true)
   }
 
   const stop = () => {
@@ -620,7 +633,7 @@ function AnimationPage({
                 <div className="button" onClick={playAll}>
                   <PlayCircleIcon />
                 </div>
-                <div className="button">
+                <div className="button" onClick={pause}>
                   <PauseIcon />
                 </div>
                 <div className="button" onClick={stop}>
