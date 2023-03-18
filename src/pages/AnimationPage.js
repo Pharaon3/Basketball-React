@@ -15,6 +15,7 @@ import { ReactComponent as MaximizeIcon } from "../assets/svg/maximize.svg";
 import { ReactComponent as VideoIcon } from "../assets/svg/video.svg";
 import { ReactComponent as FilmIcon } from "../assets/svg/film.svg";
 import { ReactComponent as PlusIcon } from "../assets/svg/plus.svg";
+import { ReactComponent as BackArrowIcon } from "../assets/svg/corner-down-left.svg";
 // import { ReactComponent as UsersIcon } from "../assets/svg/users.svg"; 
 
 import { ReactComponent as GlobeIcon } from "../assets/svg/globe.svg";
@@ -197,7 +198,8 @@ function AnimationPage({
         else return item + 1
       });
       setCurrentNumbers(nextCurrentNumbers);
-    }
+    }    
+    console.log("newCircles: ", newCircles)
   }
   const circleReleased = () => {
     if (dragCircleItem === -2) return
@@ -317,6 +319,7 @@ function AnimationPage({
     }
     setIsMiddlePicked(0)
     setDragCircleItem(-2)
+    console.log("newCircles: ", newCircles)
   }
   const pointPicked = (creatingFlag, index, color) => {
     setDragPointItem(index)
@@ -414,6 +417,20 @@ function AnimationPage({
       setEachFrameCircle(lastFrame)
     }
   }
+  const removeFrame = () => {
+    let letframe = frame
+    if(letframe === 0) return
+    let nextNewCircles = new Array()
+    for (let i = 0; i < letframe; i ++) {
+      nextNewCircles.push(newCircles[i])
+    }
+    if(currentFrame === letframe) {
+      setEachFrameCircle(newCircles[letframe - 1])
+      setCurrentFrame(letframe - 1)
+    }
+    setNewCircles(nextNewCircles)
+    setFrame(letframe - 1)
+  }
 
   const segments = 100;
 
@@ -461,7 +478,7 @@ function AnimationPage({
         }
         setCount((count) => count > segments - 1 ? 0 : count + 1);
       }
-    }, 1000);
+    }, 250);
   });
 
   const play = () => {
@@ -623,6 +640,12 @@ function AnimationPage({
                 <FilmIcon />
                 {/* <PlusIcon /> */}
                 <div>+</div>
+              </div>
+              <div
+                className="button"
+                onClick={removeFrame}
+              >
+                <BackArrowIcon />
               </div>
             </div>
             <div className="button-group">
