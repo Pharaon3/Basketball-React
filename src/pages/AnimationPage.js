@@ -22,7 +22,8 @@ import { ReactComponent as HelpCircleIcon } from "../assets/svg/help-circle.svg"
 import { ReactComponent as LogInIcon } from "../assets/svg/log-in.svg";
 
 import { ReactComponent as PlayIcon } from "../assets/svg/play.svg";
-// import { ReactComponent as PlayCircleIcon } from "../assets/svg/play-circle.svg";
+import { ReactComponent as PlayRoundIcon } from "../assets/svg/play-round.svg";
+import { ReactComponent as PlayCircleIcon } from "../assets/svg/play-circle.svg";
 import { ReactComponent as PauseIcon } from "../assets/svg/pause.svg";
 // import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
 // import { ReactComponent as RepeatIcon } from "../assets/svg/repeat.svg";
@@ -81,7 +82,9 @@ function AnimationPage({
   const [eachFrameCircle, setEachFrameCircle] = useState([])
   const [isMiddlePicked, setIsMiddlePicked] = useState(0)
   const [isPlay, setIsPlay] = useState(false)
+  const [isPlayAll, setIsPlayAll] = useState(false)
   const [circleId, setCircleId] = useState(0)
+
 
   useEffect(() => {
     if (!document.mozFullScreen && !document.webkitIsFullScreen)
@@ -251,7 +254,6 @@ function AnimationPage({
         if (index === releasingId) {
           if (currentFrame > 0) {
             itemId = item.id;
-            console.log("released circle id:", itemId)
             let lastIndex = canMiddle(item.id)
             if (lastIndex !== false) {
               let oldX = newCircles[currentFrame - 1][lastIndex]["mousePosX"] / newCircles[currentFrame - 1][lastIndex]["imgWidth"]
@@ -264,10 +266,10 @@ function AnimationPage({
                 mousePosY: mousePosY,
                 imgWidth: imgWidth,
                 isMiddle: true,
-                middleX1: (newX - oldX) * 0.3 + oldX,
-                middleY1: (newY - oldY) * 0.3 + oldY,
-                middleX2: (newX - oldX) * 0.7 + oldX,
-                middleY2: (newY - oldY) * 0.7 + oldY
+                middleX1: (newX - oldX) * 0.333 + oldX,
+                middleY1: (newY - oldY) * 0.333 + oldY,
+                middleX2: (newX - oldX) * 0.667 + oldX,
+                middleY2: (newY - oldY) * 0.667 + oldY
               }
             }
             else {
@@ -295,10 +297,10 @@ function AnimationPage({
         if (index === currentFrame) {
           return newEachFrameCircle
         }
-        else if (index > currentFrame){
+        else if (index > currentFrame) {
           let newEachFrameCircle1 = newCircles[index]
-          for (let i = 0; i < newEachFrameCircle1.length; i ++){
-            if(newEachFrameCircle1[i].id === itemId && newEachFrameCircle1[i].isMiddle === false){
+          for (let i = 0; i < newEachFrameCircle1.length; i++) {
+            if (newEachFrameCircle1[i].id === itemId && newEachFrameCircle1[i].isMiddle === false) {
               newEachFrameCircle1[i].mousePosX = mousePosX
               newEachFrameCircle1[i].mousePosY = mousePosY
               newEachFrameCircle1[i].imgWidth = imgWidth
@@ -314,7 +316,6 @@ function AnimationPage({
     }
     setIsMiddlePicked(0)
     setDragCircleItem(-2)
-    console.log("cirle released", newCircles)
   }
   const pointPicked = (creatingFlag, index, color) => {
     setDragPointItem(index)
@@ -378,7 +379,6 @@ function AnimationPage({
   for (let i = 0; i <= frame; i++) {
     rows.push(
       <div key={"frame" + i} className="filmButton" onClick={() => {
-        console.log("newCircles", newCircles)
         setCurrentFrame(i)
         if (newCircles.length < i + 1) newCircles.push(eachFrameCircle)
         setEachFrameCircle(newCircles[i])
@@ -421,8 +421,44 @@ function AnimationPage({
 
   useEffect(() => {
     setTimeout(() => {
+      let letCount = count
+      if (isPlayAll == true && letCount > segments - 1) {
+        let letCurrentFrame = currentFrame
+        let nextFrame = letCurrentFrame > frame - 1 ? 1 : letCurrentFrame + 1
+        let eachFrameCircle2 = newCircles[nextFrame]
+        let letPlayPos = new Array()
+        for (let index = 0; index < eachFrameCircle2.length; index ++) {
+          let item = eachFrameCircle2[index]
+          if (item.isMiddle) {
+            let oldOne = newCircles[nextFrame - 1][index]
+            let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
+            let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
+            let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
+            let y2 = item.mousePosY * imgWidth / item.imgWidth
+            let xm1 = item.middleX1 * imgWidth
+            let ym1 = item.middleY1 * imgWidth
+            let xm2 = item.middleX2 * imgWidth
+            let ym2 = item.middleY2 * imgWidth
+            const points = [
+              [x1, y1],
+              [xm1, ym1],
+              [xm2, ym2],
+              [x2, y2]
+            ];
+            const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+            const pts1 = interp1.getPoints(segments);
+            letPlayPos.push(pts1)
+          }
+          else {
+            letPlayPos.push([item.mousePosX, item.mousePosY])
+          }
+        }
+        setCurrentFrame(nextFrame)
+        setEachFrameCircle(newCircles[nextFrame])
+        setPlayPos(letPlayPos)
+      }
       setCount((count) => count > segments - 1 ? 0 : count + 1);
-    }, 10000);
+    }, 1000);
   });
 
   const play = () => {
@@ -456,7 +492,41 @@ function AnimationPage({
         letPlayPos.push([item.mousePosX, item.mousePosY])
       }
     }
-    console.log(letPlayPos)
+    setPlayPos(letPlayPos)
+  }
+  const playAll = () => {
+    setIsPlay(true)
+    setIsPlayAll(true)
+    setCount(0)
+    setCurrentFrame(1)
+
+    let letPlayPos = new Array()
+    for (let index = 0; index < eachFrameCircle.length; index++) {
+      let item = eachFrameCircle[index]
+      if (item.isMiddle) {
+        let oldOne = newCircles[currentFrame - 1][index]
+        let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
+        let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
+        let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
+        let y2 = item.mousePosY * imgWidth / item.imgWidth
+        let xm1 = item.middleX1 * imgWidth
+        let ym1 = item.middleY1 * imgWidth
+        let xm2 = item.middleX2 * imgWidth
+        let ym2 = item.middleY2 * imgWidth
+        const points = [
+          [x1, y1],
+          [xm1, ym1],
+          [xm2, ym2],
+          [x2, y2]
+        ];
+        const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+        const pts1 = interp1.getPoints(segments);
+        letPlayPos.push(pts1)
+      }
+      else {
+        letPlayPos.push([item.mousePosX, item.mousePosY])
+      }
+    }
     setPlayPos(letPlayPos)
   }
 
@@ -466,13 +536,14 @@ function AnimationPage({
 
   const stop = () => {
     setIsPlay(false)
+    setIsPlayAll(false)
   }
 
   const canMiddle = (id) => {
-    if (currentFrame == 0) return false
+    if (currentFrame === 0) return false
     let lastFrameCircle = newCircles[currentFrame - 1];
-    for (let i = 0; i < lastFrameCircle.length; i ++){
-      if(lastFrameCircle[i].id === id) return i
+    for (let i = 0; i < lastFrameCircle.length; i++) {
+      if (lastFrameCircle[i].id === id) return i
     }
     return false
   }
@@ -546,6 +617,9 @@ function AnimationPage({
                 <div className="button" onClick={play}>
                   <PlayIcon />
                 </div>
+                <div className="button" onClick={playAll}>
+                  <PlayCircleIcon />
+                </div>
                 <div className="button">
                   <PauseIcon />
                 </div>
@@ -573,9 +647,6 @@ function AnimationPage({
               {
                 eachFrameCircle?.map((item, index) => {
                   if (!isPlay) {
-                    // const defaultStyle = { top: `${item?.mousePosY * (imgWidth / item?.imgWidth) - positionCircleDiff}px`, left: `${item?.mousePosX * (imgWidth / item?.imgWidth) - positionCircleDiff}px` }
-                    const dragStyle = { display: 'none' }
-                    var contextFlag = false
                     if (item.isMiddle) {
                       let lastIndex = canMiddle(item.id)
                       let oldOne = newCircles[currentFrame - 1][lastIndex]
@@ -641,6 +712,51 @@ function AnimationPage({
                       return (
                         <div className={'circle old'} key={"old-circle-" + index} id={"old-circle-" + index} style={defaultStyle}>
                           {item?.number}
+                        </div>
+                      )
+                    }
+                  }
+                })
+              }
+              {
+                eachFrameCircle?.map((item, index) => {
+                  if (!isPlay) {
+                    const dragStyle = { top: `${mousePosY - positionCircleDiff}px`, left: `${mousePosX - positionCircleDiff}px` }
+                    // const dragStyle = { display: 'none' }
+                    var contextFlag = false
+                    if (item.isMiddle) {
+                      const defaultStyle1 = { top: `${item?.middleY1 * imgWidth - positionCircleDiff}px`, left: `${item?.middleX1 * imgWidth - positionCircleDiff}px` }
+                      const defaultStyle2 = { top: `${item?.middleY2 * imgWidth - positionCircleDiff}px`, left: `${item?.middleX2 * imgWidth - positionCircleDiff}px` }
+                      return (
+                        <div key={"new-circle-middle-" + index}>
+                          <div className='circle middle'
+                            style={(dragCircleItem === index && isMiddlePicked === 1 || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1 && isMiddlePicked === 1)) ? dragStyle : defaultStyle1}
+                            onMouseDown={(e) => {
+                              if (e.button === 2) return
+                              setIsMiddlePicked(1)
+                              circlePicked(false, index, "")
+                            }}
+                            onTouchStart={() => {
+                              if (contextFlag) return
+                              setIsMiddlePicked(1)
+                              circlePicked(false, index, "")
+                            }}>
+                            {item?.number}
+                          </div>
+                          <div className='circle middle'
+                            style={(dragCircleItem === index && isMiddlePicked === 2 || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1 && isMiddlePicked === 2)) ? dragStyle : defaultStyle2}
+                            onMouseDown={(e) => {
+                              if (e.button === 2) return
+                              setIsMiddlePicked(2)
+                              circlePicked(false, index, "")
+                            }}
+                            onTouchStart={() => {
+                              if (contextFlag) return
+                              setIsMiddlePicked(2)
+                              circlePicked(false, index, "")
+                            }}>
+                            {item?.number}
+                          </div>
                         </div>
                       )
                     }
@@ -734,51 +850,6 @@ function AnimationPage({
                       <div className="name">{item?.name}</div>
                     </div>
                   )
-                })
-              }
-              {
-                eachFrameCircle?.map((item, index) => {
-                  if (!isPlay) {
-                    const dragStyle = { top: `${mousePosY - positionCircleDiff}px`, left: `${mousePosX - positionCircleDiff}px` }
-                    // const dragStyle = { display: 'none' }
-                    var contextFlag = false
-                    if (item.isMiddle) {
-                      const defaultStyle1 = { top: `${item?.middleY1 * imgWidth - positionCircleDiff}px`, left: `${item?.middleX1 * imgWidth - positionCircleDiff}px` }
-                      const defaultStyle2 = { top: `${item?.middleY2 * imgWidth - positionCircleDiff}px`, left: `${item?.middleX2 * imgWidth - positionCircleDiff}px` }
-                      return (
-                        <div key={"new-circle-middle-" + index}>
-                          <div className='circle middle'
-                            style={(dragCircleItem === index && isMiddlePicked === 1 || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1 && isMiddlePicked === 1)) ? dragStyle : defaultStyle1}
-                            onMouseDown={(e) => {
-                              if (e.button === 2) return
-                              setIsMiddlePicked(1)
-                              circlePicked(false, index, "")
-                            }}
-                            onTouchStart={() => {
-                              if (contextFlag) return
-                              setIsMiddlePicked(1)
-                              circlePicked(false, index, "")
-                            }}>
-                            {item?.number}
-                          </div>
-                          <div className='circle middle'
-                            style={(dragCircleItem === index && isMiddlePicked === 2 || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1 && isMiddlePicked === 2)) ? dragStyle : defaultStyle2}
-                            onMouseDown={(e) => {
-                              if (e.button === 2) return
-                              setIsMiddlePicked(2)
-                              circlePicked(false, index, "")
-                            }}
-                            onTouchStart={() => {
-                              if (contextFlag) return
-                              setIsMiddlePicked(2)
-                              circlePicked(false, index, "")
-                            }}>
-                            {item?.number}
-                          </div>
-                        </div>
-                      )
-                    }
-                  }
                 })
               }
               {
