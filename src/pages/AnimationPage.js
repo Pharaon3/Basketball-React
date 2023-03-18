@@ -27,7 +27,7 @@ import { ReactComponent as PlayRoundIcon } from "../assets/svg/play-round.svg";
 import { ReactComponent as PlayCircleIcon } from "../assets/svg/play-circle.svg";
 import { ReactComponent as PauseIcon } from "../assets/svg/pause.svg";
 // import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
-// import { ReactComponent as RepeatIcon } from "../assets/svg/repeat.svg";
+import { ReactComponent as RepeatIcon } from "../assets/svg/repeat.svg";
 
 import { ReactComponent as BallIcon } from "../assets/svg/basketball.svg";
 import { ReactComponent as TrashIcon } from "../assets/svg/trash.svg";
@@ -86,6 +86,7 @@ function AnimationPage({
   const [isPlayAll, setIsPlayAll] = useState(false)
   const [circleId, setCircleId] = useState(0)
   const [isPause, setIsPause] = useState(false)
+  const [isRepeat, setIsRepeat] = useState(false)
 
 
   useEffect(() => {
@@ -382,7 +383,7 @@ function AnimationPage({
   let rows = [];
   for (let i = 0; i <= frame; i++) {
     rows.push(
-      <div key={"frame" + i} className="filmButton" onClick={() => {
+      <div key={"frame" + i} className={currentFrame === i ? "filmButton clicked" : "filmButton"} onClick={() => {
         setCurrentFrame(i)
         if (newCircles.length < i + 1) newCircles.push(eachFrameCircle)
         setEachFrameCircle(newCircles[i])
@@ -569,6 +570,10 @@ function AnimationPage({
     setIsPlayAll(false)
   }
 
+  const repeat = () => {
+    setIsRepeat((isRepeat) => isRepeat ? false : true)
+  }
+
   const canMiddle = (id) => {
     if (currentFrame === 0) return false
     let lastFrameCircle = newCircles[currentFrame - 1];
@@ -650,17 +655,20 @@ function AnimationPage({
             </div>
             <div className="button-group">
               <div style={{ marginRight: 20 }} className="button-group">
-                <div className="button" onClick={play}>
+                <div className={isPlay && !isPlayAll ? "button clicked" : "button"} onClick={play}>
                   <PlayIcon />
                 </div>
-                <div className="button" onClick={playAll}>
+                <div className={isPlayAll ? "button clicked" : "button"} onClick={playAll}>
                   <PlayCircleIcon />
                 </div>
-                <div className="button" onClick={pause}>
+                <div className={!isPause ? "button" : "button clicked"} onClick={pause}>
                   <PauseIcon />
                 </div>
                 <div className="button" onClick={stop}>
                   <SquareIcon />
+                </div>
+                <div className={!isRepeat ? "button" : "button clicked"} onClick={repeat}>
+                  <RepeatIcon />
                 </div>
               </div>
               <div className="button">
