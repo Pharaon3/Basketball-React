@@ -199,7 +199,7 @@ function AnimationPage({
         else return item + 1
       });
       setCurrentNumbers(nextCurrentNumbers);
-    }    
+    }
     console.log("newCircles: ", newCircles)
   }
   const circleReleased = () => {
@@ -420,12 +420,12 @@ function AnimationPage({
   }
   const removeFrame = () => {
     let letframe = frame
-    if(letframe === 0) return
+    if (letframe === 0) return
     let nextNewCircles = new Array()
-    for (let i = 0; i < letframe; i ++) {
+    for (let i = 0; i < letframe; i++) {
       nextNewCircles.push(newCircles[i])
     }
-    if(currentFrame === letframe) {
+    if (currentFrame === letframe) {
       setEachFrameCircle(newCircles[letframe - 1])
       setCurrentFrame(letframe - 1)
     }
@@ -440,7 +440,7 @@ function AnimationPage({
 
   useEffect(() => {
     setTimeout(() => {
-      if (!isPause) {
+      if (!isPause && isPlay) {
         let letCount = count
         if (isPlayAll == true && letCount > segments - 1) {
           let letCurrentFrame = currentFrame
@@ -478,6 +478,15 @@ function AnimationPage({
           setPlayPos(letPlayPos)
         }
         setCount((count) => count > segments - 1 ? 0 : count + 1);
+        // if (count > segments - 1) {
+        //   if(isRepeat || isPlayAll) setCount(0)
+        //   else {
+        //     setCount(0)
+        //     setIsPlay(false)
+        //     setIsPlayAll(false)
+        //   }
+        // }
+        // else setCount((count) => count + 1);
       }
     }, 250);
   });
@@ -809,7 +818,7 @@ function AnimationPage({
               }
               {
                 eachFrameCircle?.map((item, index) => {
-                  let playPosX = 0, playPosY = 0
+                  let playPosX = item.mousePosX, playPosY = item.mousePosY
                   if (item.isMiddle && isPlay) {
                     playPosX = playPos[index][count][0]
                     playPosY = playPos[index][count][1]
