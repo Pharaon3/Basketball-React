@@ -477,16 +477,14 @@ function AnimationPage({
           setEachFrameCircle(newCircles[nextFrame])
           setPlayPos(letPlayPos)
         }
+        // setCount((count) => count > segments - 1 ? 0 : count + 1);
+        if (count > segments - 1) {
+          if(!isRepeat && !isPlayAll) {
+            setIsPlay(false)
+            setIsPlayAll(false)
+          }
+        }
         setCount((count) => count > segments - 1 ? 0 : count + 1);
-        // if (count > segments - 1) {
-        //   if(isRepeat || isPlayAll) setCount(0)
-        //   else {
-        //     setCount(0)
-        //     setIsPlay(false)
-        //     setIsPlayAll(false)
-        //   }
-        // }
-        // else setCount((count) => count + 1);
       }
     }, 250);
   });
