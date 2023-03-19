@@ -49,7 +49,7 @@ import {
 import mainLogo from "../assets/logo.png";
 import html2canvas from "html2canvas";
 import SceneWithDrawables from "../components/SceneWithDrawables";
-import { collection, getDocs, QuerySnapshot } from "firebase/firestore";
+import { collection, getDocs, addDoc, QuerySnapshot } from "firebase/firestore";
 import { firestore } from "../firebase_setup/firebase";
 var onceFlag = true
 
@@ -413,7 +413,7 @@ function AnimationPage({
       </div>
     );
   }
-  const isEqual = (a, b) => JSON.stringify(a) == JSON.stringify(b) 
+  const isEqual = (a, b) => JSON.stringify(a) == JSON.stringify(b)
   const makeNewFrame = () => {
     let letframe = frame
     let letcurrentFrame = currentFrame
@@ -427,10 +427,10 @@ function AnimationPage({
         middleY2: 0
       }
     })
-    if(letframe === 0 && !lastFrame) return
-    if(letframe > 0){
+    if (letframe === 0 && !lastFrame) return
+    if (letframe > 0) {
       const comp1 = newCircles[letframe].map((item, index) => {
-        return{
+        return {
           ...item,
           isMiddle: false,
           middleX1: 0,
@@ -440,7 +440,7 @@ function AnimationPage({
         }
       })
       const comp2 = newCircles[letframe - 1].map((item, index) => {
-        return{
+        return {
           ...item,
           isMiddle: false,
           middleX1: 0,
