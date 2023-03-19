@@ -98,7 +98,6 @@ function AnimationPage({
   const params = useParams()
   const key = params.key
 
-  const [animationData, setAnimationData] = useState([]);
   const fetchPost = async () => {
     await getDocs(collection(firestore, "newCircles")).then((querySnapshot) => {
       const newData = querySnapshot.docs.map((doc) => {
@@ -107,31 +106,31 @@ function AnimationPage({
           pid: doc.id,
         })
       });
-      console.log("newData", newData)
       if (newData) {
         newData.map((item, index) => {
           if (item && item.pid) {
             if (item.pid === key) {
               const originState = JSON.parse(item.newCircles)
-              console.log("originState", originState)
-              setFrame(originState.length - 1)
-              setEachFrameCircle(originState[0]);
-              setNewCircles(originState)
+              const originNewCircles = originState[0]
+              const originCurrentNumbers = originState[1]
+              setFrame(originNewCircles.length - 1)
+              setEachFrameCircle(originNewCircles[0]);
+              setNewCircles(originNewCircles)
+              setCurrentNumbers(originCurrentNumbers)
+              setIsPlay(true)
+              setIsPlayAll(true)
             }
           }
         })
 
       }
-      if (key == "blank") {
-
-      }
-
     });
   };
 
   const saveState = async (e) => {
     e.preventDefault();
-    var myObject = JSON.stringify(newCircles);
+    if(frame === 0) return
+    var myObject = JSON.stringify([newCircles, currentNumbers]);
     try {
       const docRef = await addDoc(collection(firestore, "newCircles"), {
         newCircles: myObject,

@@ -354,7 +354,7 @@ function MainPage({
               >
                 {!fullScreenFlag ? <MaximizeIcon /> : <MinimizeIcon />}
               </div>
-              <div className="button" onClick={() => navigate("/animation")}>
+              <div className="button" onClick={() => navigate("/animation/blank")}>
                 <VideoIcon style={{ color: "red", stroke: "red" }} />
               </div>
             </div>
