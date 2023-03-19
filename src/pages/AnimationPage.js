@@ -90,7 +90,7 @@ function AnimationPage({
   const [count, setCount] = useState(0);
   const [playPos, setPlayPos] = useState([])
 
-  const segments = 100;
+  const segments = 80;
 
   useEffect(() => {
     if (!document.mozFullScreen && !document.webkitIsFullScreen)
