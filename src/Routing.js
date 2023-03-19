@@ -76,7 +76,7 @@ function Routing({fullScreenHandle}) {
         {loginFlag &&
           <Route
             exact
-            path="/animation"
+            path="/animation/:key"
             element={
               <AnimationPage
                 fieldLineFlag={fieldLineFlag}  setFieldLineFlag={setFieldLineFlag}

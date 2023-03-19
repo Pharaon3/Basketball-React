@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from 'react-router-dom'
 import "./AnimationPage.scss";
 import { useNavigate } from "react-router-dom";
 import fieldLine from "../assets/field-line-with-logo.png";
@@ -94,15 +95,37 @@ function AnimationPage({
 
   const segments = 80;
 
+  const params = useParams()
+  const key = params.key
+
   const [animationData, setAnimationData] = useState([]);
   const fetchPost = async () => {
-    await getDocs(collection(firestore, "animation_data")).then((querySnapshot) => {
-      const newData = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        pid: doc.id,
-      }));
-      setEachFrameCircle(newData);
-      setNewCircles([newData])
+    await getDocs(collection(firestore, "newCircles")).then((querySnapshot) => {
+      const newData = querySnapshot.docs.map((doc) => {
+        if (doc.id === key) return ({
+          ...doc.data(),
+          pid: doc.id,
+        })
+      });
+      console.log("newData", newData)
+      if (newData) {
+        newData.map((item, index) => {
+          if (item && item.pid) {
+            if (item.pid === key) {
+              const originState = JSON.parse(item.newCircles)
+              console.log("originState", originState)
+              setFrame(originState.length - 1)
+              setEachFrameCircle(originState[0]);
+              setNewCircles(originState)
+            }
+          }
+        })
+
+      }
+      if (key == "blank") {
+
+      }
+
     });
   };
 
@@ -110,14 +133,14 @@ function AnimationPage({
     e.preventDefault();
     var myObject = JSON.stringify(newCircles);
     try {
-        const docRef = await addDoc(collection(firestore, "newCircles"), {
-          newCircles: myObject,    
-        });
-        console.log("Document written with ID: ", docRef.id);
-      } catch (e) {
-        console.error("Error adding document: ", e);
-      }
-}
+      const docRef = await addDoc(collection(firestore, "newCircles"), {
+        newCircles: myObject,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
 
   useEffect(() => {
     fetchPost();
