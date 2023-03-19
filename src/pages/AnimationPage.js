@@ -41,7 +41,10 @@ import { ReactComponent as PointerIcon } from "../assets/svg/x.svg";
 import { ReactComponent as CircleIcon } from "../assets/svg/circle.svg";
 import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
 import { ReactComponent as TypeIcon } from "../assets/svg/type.svg";
-
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
 import { CurveInterpolator } from 'curve-interpolator';
 import {
   NaturalCurve
@@ -52,7 +55,20 @@ import html2canvas from "html2canvas";
 import SceneWithDrawables from "../components/SceneWithDrawables";
 import { collection, getDocs, addDoc, QuerySnapshot } from "firebase/firestore";
 import { firestore } from "../firebase_setup/firebase";
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 var onceFlag = true
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '50%',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 function AnimationPage({
   fieldLineFlag, setFieldLineFlag,
@@ -92,7 +108,10 @@ function AnimationPage({
   const [isRepeat, setIsRepeat] = useState(false)
   const [count, setCount] = useState(0);
   const [playPos, setPlayPos] = useState([])
-
+  const [saveKey, setSaveKey] = useState()
+  const [open, setOpen] = React.useState(false);
+  const modalOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const segments = 80;
 
   const params = useParams()
@@ -129,13 +148,15 @@ function AnimationPage({
 
   const saveState = async (e) => {
     e.preventDefault();
-    if(frame === 0) return
+    if (frame === 0) return
     var myObject = JSON.stringify([newCircles, currentNumbers]);
     try {
       const docRef = await addDoc(collection(firestore, "newCircles"), {
         newCircles: myObject,
       });
       console.log("Document written with ID: ", docRef.id);
+      setSaveKey(docRef.id)
+      modalOpen()
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -256,7 +277,6 @@ function AnimationPage({
       });
       setCurrentNumbers(nextCurrentNumbers);
     }
-    console.log("newCircles: ", newCircles)
   }
   const circleReleased = () => {
     if (dragCircleItem === -2) return
@@ -376,7 +396,6 @@ function AnimationPage({
     }
     setIsMiddlePicked(0)
     setDragCircleItem(-2)
-    console.log("newCircles: ", newCircles)
   }
   const pointPicked = (creatingFlag, index, color) => {
     setDragPointItem(index)
@@ -1191,6 +1210,24 @@ function AnimationPage({
           </div>
         </div>
       </div>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Get a link to the animation:
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            http://localhost:3000/animation/{saveKey}
+          </Typography>
+          <CopyToClipboard text={"http://localhost:3000/animation/" + saveKey}>
+            <button>Copy to clipboard</button>
+          </CopyToClipboard>
+        </Box>
+      </Modal>
     </div>
   );
 }
