@@ -7,6 +7,7 @@
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
     "curve-interpolator": "^3.1.1",
+    "firebase": "^9.18.0",
     "html2canvas": "^1.4.1",
     "konva": "^8.4.2",
     "node-sass": "^8.0.0",

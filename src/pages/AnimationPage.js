@@ -49,6 +49,8 @@ import {
 import mainLogo from "../assets/logo.png";
 import html2canvas from "html2canvas";
 import SceneWithDrawables from "../components/SceneWithDrawables";
+import { collection, getDocs, QuerySnapshot } from "firebase/firestore";
+import { firestore } from "../firebase_setup/firebase";
 var onceFlag = true
 
 function AnimationPage({
@@ -91,6 +93,22 @@ function AnimationPage({
   const [playPos, setPlayPos] = useState([])
 
   const segments = 80;
+
+  const [animationData, setAnimationData] = useState([]);
+  const fetchPost = async () => {
+    await getDocs(collection(firestore, "circle")).then((querySnapshot) => {
+      const newData = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        pid: doc.id,
+      }));
+      console.log("newData", newData)
+      setAnimationData(newData);
+    });
+  };
+
+  useEffect(() => {
+    fetchPost();
+  }, []);
 
   useEffect(() => {
     if (!document.mozFullScreen && !document.webkitIsFullScreen)
