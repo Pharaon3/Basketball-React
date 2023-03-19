@@ -395,11 +395,10 @@ function AnimationPage({
       </div>
     );
   }
+  const isEqual = (a, b) => JSON.stringify(a) == JSON.stringify(b) 
   const makeNewFrame = () => {
     let letframe = frame
     let letcurrentFrame = currentFrame
-    setFrame(letframe + 1);
-    setCurrentFrame(letframe + 1);
     const lastFrame = newCircles[letframe]?.map((item, index) => {
       return {
         ...item,
@@ -410,8 +409,34 @@ function AnimationPage({
         middleY2: 0
       }
     })
+    if(letframe === 0 && !lastFrame) return
+    if(letframe > 0){
+      const comp1 = newCircles[letframe].map((item, index) => {
+        return{
+          ...item,
+          isMiddle: false,
+          middleX1: 0,
+          middleX2: 0,
+          middleY1: 0,
+          middleY2: 0
+        }
+      })
+      const comp2 = newCircles[letframe - 1].map((item, index) => {
+        return{
+          ...item,
+          isMiddle: false,
+          middleX1: 0,
+          middleX2: 0,
+          middleY1: 0,
+          middleY2: 0
+        }
+      })
+      if (isEqual(comp1, comp2)) return
+    }
     newCircles.push(lastFrame)
     setEachFrameCircle(lastFrame)
+    setFrame(letframe + 1);
+    setCurrentFrame(letframe + 1);
   }
   const removeFrame = () => {
     let letframe = frame
