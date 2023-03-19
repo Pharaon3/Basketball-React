@@ -87,7 +87,10 @@ function AnimationPage({
   const [circleId, setCircleId] = useState(0)
   const [isPause, setIsPause] = useState(false)
   const [isRepeat, setIsRepeat] = useState(false)
+  const [count, setCount] = useState(0);
+  const [playPos, setPlayPos] = useState([])
 
+  const segments = 100;
 
   useEffect(() => {
     if (!document.mozFullScreen && !document.webkitIsFullScreen)
@@ -379,7 +382,6 @@ function AnimationPage({
     setNewBalls(nextNewBalls)
     setDragBallItem(-2)
   }
-
   let rows = [];
   for (let i = 0; i <= frame; i++) {
     rows.push(
@@ -393,7 +395,6 @@ function AnimationPage({
       </div>
     );
   }
-
   const makeNewFrame = () => {
     let letframe = frame
     let letcurrentFrame = currentFrame
@@ -432,12 +433,6 @@ function AnimationPage({
     setNewCircles(nextNewCircles)
     setFrame(letframe - 1)
   }
-
-  const segments = 100;
-
-  const [count, setCount] = useState(0);
-  const [playPos, setPlayPos] = useState([])
-
   useEffect(() => {
     setTimeout(() => {
       if (!isPause && isPlay) {
@@ -494,7 +489,6 @@ function AnimationPage({
       }
     }, 250);
   });
-
   const play = () => {
     if (isPause) {
       setIsPause(false)
@@ -573,20 +567,16 @@ function AnimationPage({
       setPlayPos(letPlayPos)
     }
   }
-
   const pause = () => {
     setIsPause(true)
   }
-
   const stop = () => {
     setIsPlay(false)
     setIsPlayAll(false)
   }
-
   const repeat = () => {
     setIsRepeat((isRepeat) => isRepeat ? false : true)
   }
-
   const canMiddle = (id) => {
     if (currentFrame === 0) return false
     let lastFrameCircle = newCircles[currentFrame - 1];
