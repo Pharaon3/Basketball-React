@@ -96,13 +96,13 @@ function AnimationPage({
 
   const [animationData, setAnimationData] = useState([]);
   const fetchPost = async () => {
-    await getDocs(collection(firestore, "circle")).then((querySnapshot) => {
+    await getDocs(collection(firestore, "animation_data")).then((querySnapshot) => {
       const newData = querySnapshot.docs.map((doc) => ({
         ...doc.data(),
         pid: doc.id,
       }));
-      console.log("newData", newData)
-      setAnimationData(newData);
+      setEachFrameCircle(newData);
+      setNewCircles([newData])
     });
   };
 
