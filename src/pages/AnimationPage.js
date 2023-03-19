@@ -29,6 +29,7 @@ import { ReactComponent as PlayCircleIcon } from "../assets/svg/play-circle.svg"
 import { ReactComponent as PauseIcon } from "../assets/svg/pause.svg";
 // import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
 import { ReactComponent as RepeatIcon } from "../assets/svg/repeat.svg";
+import { ReactComponent as CopyIcon } from "../assets/svg/copy.svg";
 
 import { ReactComponent as BallIcon } from "../assets/svg/basketball.svg";
 import { ReactComponent as TrashIcon } from "../assets/svg/trash.svg";
@@ -64,10 +65,11 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: '50%',
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
+  bgcolor: 'black',
+  border: '5px solid #ff8',
   boxShadow: 24,
   p: 4,
+  color: 'white'
 };
 
 function AnimationPage({
@@ -1217,15 +1219,20 @@ function AnimationPage({
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
+          <Typography id="modal-modal-title" variant="h6" className="modal-header">
             Get a link to the animation:
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            http://localhost:3000/animation/{saveKey}
-          </Typography>
-          <CopyToClipboard text={"http://localhost:3000/animation/" + saveKey}>
-            <button>Copy to clipboard</button>
-          </CopyToClipboard>
+          <div style={{ display: 'flex', alignItems: 'center'}}>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }} style={{margin: 0}}>
+              http://localhost:3000/animation/{saveKey}
+              {window.location.href}
+            </Typography>
+            <CopyToClipboard text={"http://localhost:3000/animation/" + saveKey}>
+              <div className="copyBtn">
+                <CopyIcon />
+              </div>
+            </CopyToClipboard>
+          </div>
         </Box>
       </Modal>
     </div>

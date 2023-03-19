@@ -959,3 +959,18 @@
     z-index: 1000;
     border-radius: 1px;
 }
+.copyBtn {
+    margin-left: 10px;
+    color: grey;
+    cursor: pointer;
+}
+.copyBtn:hover {
+    color: rgb(185, 185, 185);
+}
+.copyBtn:active {
+    color: white;
+}
+.modal-header {
+    color: #ff8;
+    font-size: 30px !important;
+}
