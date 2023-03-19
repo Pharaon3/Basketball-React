@@ -106,6 +106,19 @@ function AnimationPage({
     });
   };
 
+  const saveState = async (e) => {
+    e.preventDefault();
+    var myObject = JSON.stringify(newCircles);
+    try {
+        const docRef = await addDoc(collection(firestore, "newCircles"), {
+          newCircles: myObject,    
+        });
+        console.log("Document written with ID: ", docRef.id);
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+}
+
   useEffect(() => {
     fetchPost();
   }, []);
@@ -642,7 +655,7 @@ function AnimationPage({
               <div className="button" onClick={() => setRosterShowFlag(!rosterShowFlag)}>
                 <MenuIcon />
               </div>
-              <div className="button">
+              <div className="button" onClick={saveState}>
                 <LinkIcon />
               </div>
               <div
