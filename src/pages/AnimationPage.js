@@ -400,24 +400,18 @@ function AnimationPage({
     let letcurrentFrame = currentFrame
     setFrame(letframe + 1);
     setCurrentFrame(letframe + 1);
-    if (letframe === 0) {
-      newCircles.push(eachFrameCircle)
-      setEachFrameCircle(eachFrameCircle)
-    }
-    else {
-      const lastFrame = newCircles[letframe]?.map((item, index) => {
-        return {
-          ...item,
-          isMiddle: false,
-          middleX1: 0,
-          middleX2: 0,
-          middleY1: 0,
-          middleY2: 0
-        }
-      })
-      newCircles.push(lastFrame)
-      setEachFrameCircle(lastFrame)
-    }
+    const lastFrame = newCircles[letframe]?.map((item, index) => {
+      return {
+        ...item,
+        isMiddle: false,
+        middleX1: 0,
+        middleX2: 0,
+        middleY1: 0,
+        middleY2: 0
+      }
+    })
+    newCircles.push(lastFrame)
+    setEachFrameCircle(lastFrame)
   }
   const removeFrame = () => {
     let letframe = frame
