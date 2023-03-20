@@ -136,10 +136,19 @@ function AnimationPage({
           if (item && item.pid) {
             if (item.pid === key) {
               const originState = JSON.parse(item.state)
-              const originCurrentNumbers = originState[0]
-              const originNewCircles = originState[1]
-              const originNewPoints = originState[2]
-              const originNewBalls = originState[3]
+              const originIds = originState[0]
+              const originCurrentNumbers = originState[1]
+              const originNewCircles = originState[2]
+              const originNewPoints = originState[3]
+              const originNewBalls = originState[4]
+              console.log("originState", originState)
+              console.log("originCurrentNumbers", originCurrentNumbers)
+              console.log("originNewCircles", originNewCircles)
+              console.log("originNewPoints", originNewPoints)
+              console.log("originNewBalls", originNewBalls)
+              setCircleId(originIds[0])
+              setPointId(originIds[1])
+              setBallId(originIds[2])
               setFrame(originNewCircles.length - 1)
               setEachFrameCircle(originNewCircles[0]);
               setEachFramePoint(originNewPoints[0]);
@@ -161,7 +170,7 @@ function AnimationPage({
   const saveState = async (e) => {
     e.preventDefault();
     if (frame === 0) return
-    var myObject = JSON.stringify([currentNumbers, newCircles, newPoints, newBalls]);
+    var myObject = JSON.stringify([[circleId, pointId, ballId], currentNumbers, newCircles, newPoints, newBalls]);
     try {
       const docRef = await addDoc(collection(firestore, "state"), {
         state: myObject,
@@ -182,6 +191,7 @@ function AnimationPage({
     if (!document.mozFullScreen && !document.webkitIsFullScreen)
       setFullScreenFlag(false);
     else setFullScreenFlag(true);
+    // console.log("eachFrameCircle", eachFrameCircle)
   });
   useEffect(() => {
     if (!onceFlag) return
@@ -446,6 +456,8 @@ function AnimationPage({
         setNewPoints(newEachFramePoint)
       }
     }
+    console.log("eachFramePoint", eachFramePoint)
+    console.log("newPoints", newPoints)
   }
   const pointReleased = () => {
     if (dragPointItem === -2) return
@@ -1385,7 +1397,6 @@ function AnimationPage({
           <div style={{ display: 'flex', alignItems: 'center'}}>
             <Typography id="modal-modal-description" sx={{ mt: 2 }} style={{margin: 0}}>
               http://localhost:3000/animation/{saveKey}
-              {window.location.href}
             </Typography>
             <CopyToClipboard text={"http://localhost:3000/animation/" + saveKey}>
               <div className="copyBtn">
