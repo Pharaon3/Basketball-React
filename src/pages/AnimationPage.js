@@ -204,7 +204,7 @@ function AnimationPage({
       if (tempInnerWidth > 1170) {
         setPositionCircleDiff(18)
         setPositionPointDiff(10)
-        setPositionBallDiff(15)
+        setPositionBallDiff(12.5)
       }
       else if (tempInnerWidth > 480) {
         setPositionCircleDiff(13)

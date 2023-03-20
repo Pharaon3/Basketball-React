@@ -190,6 +190,7 @@
 
                     .point {
                         position: absolute;
+                        z-index: 3;
                         width: 20px;
                         height: 20px;
                         border-radius: 20px;
@@ -213,14 +214,34 @@
                         &.cornflowerblue {
                             background-color: cornflowerblue;
                         }
+                        &.old {
+                            background-color: rgb(131, 131, 131);
+                        }
+                        &.middle {
+                            background-color: rgb(78, 78, 78);
+                        }
                     }
 
                     .ball {
                         position: absolute;
-                        width: 30px;
-                        height: 30px;
-                        border-radius: 30px;
+                        z-index: 3;
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 20px;
                         cursor: pointer;
+                        &.middle {
+                            background-color: rgb(78, 78, 78);
+                            border: 3px solid rgb(255, 255, 255);
+                            width: 20px;
+                            height: 20px;
+                        }
+
+                        &.old {
+                            background-color: rgb(131, 131, 131);
+                            border: 3px solid rgb(197, 197, 197);
+                            width: 20px;
+                            height: 20px;
+                        }
                     }
                 }
 
