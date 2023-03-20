@@ -579,31 +579,162 @@ function AnimationPage({
     setDragPointItem(-2)
   }
   const ballPicked = (creatingFlag, index) => {
+    if (dropMenuItem > -1) return
     setDragBallItem(index)
+    setDropMenuItem(-1)
+    let newEachFrameBall = eachFrameBall
     if (creatingFlag) {
       const newObject = {
+        id: ballId,
+        name: "",
         mousePosX: mousePosX,
         mousePosY: mousePosY,
-        imgWidth: imgWidth
+        imgWidth: imgWidth,
+        middleX1: 0,
+        middleY1: 0,
+        middleX2: 0,
+        middleY2: 0,
+        isMiddle: false
       }
-      newBalls.push(newObject)
+      setBallId(ballId + 1)
+      newEachFrameBall.push(newObject)
+      setEachFrameBall(newEachFrameBall)
+      const nextNewBalls = newBalls.map((item, index) => {
+        if (index === currentFrame) {
+          return newEachFrameBall
+        }
+        else if (index > currentFrame) {
+          let letItem = new Array()
+          letItem = [...item, newObject]
+          return [...item, newObject]
+        }
+        else {
+          return item
+        }
+      })
+      setNewBalls(nextNewBalls)
+      if (nextNewBalls.length === 0) {
+        setNewBalls(newEachFrameBall)
+      }
     }
   }
   const ballReleased = () => {
     if (dragBallItem === -2) return
-    const releasingId = dragBallItem > -1 ? dragBallItem : newBalls?.length - 1
-    const nextNewBalls = newBalls?.map((item, index) => {
-      if (index === releasingId) {
-        return {
-          ...item,
-          mousePosX: mousePosX,
-          mousePosY: mousePosY,
-          imgWidth: imgWidth
-        };
-      }
-      else return item
-    })
-    setNewBalls(nextNewBalls)
+    if (isMiddlePicked) {
+      const releasingId = dragBallItem > -1 ? dragBallItem : eachFrameBall?.length - 1
+      const newEachFrameBall = eachFrameBall?.map((item, index) => {
+        if (index === releasingId) {
+          if (currentFrame > 0) {
+            let lastIndex = canMiddleBall(item.id)
+            if (lastIndex !== false) {
+              if (isMiddlePicked == 1) {
+                return {
+                  ...item,
+                  middleX1: mousePosX / imgWidth,
+                  middleY1: mousePosY / imgWidth
+                }
+              }
+              if (isMiddlePicked == 2) {
+                return {
+                  ...item,
+                  middleX2: mousePosX / imgWidth,
+                  middleY2: mousePosY / imgWidth
+                }
+              }
+            }
+            else {
+              return {
+                ...item,
+              };
+            }
+          }
+          else {
+            return {
+              ...item,
+            };
+          }
+        }
+        else return item
+      })
+      setEachFrameBall(newEachFrameBall);
+      const nextNewBalls = newBalls.map((item, index) => {
+        if (index === currentFrame) {
+          return newEachFrameBall
+        }
+        else {
+          return item
+        }
+      })
+      setNewBalls(nextNewBalls)
+    }
+    else {
+      const releasingId = dragBallItem > -1 ? dragBallItem : eachFrameBall?.length - 1
+      let itemId;
+      const newEachFrameBall = eachFrameBall?.map((item, index) => {
+        if (index === releasingId) {
+          if (currentFrame > 0) {
+            itemId = item.id;
+            let lastIndex = canMiddleBall(item.id)
+            if (lastIndex !== false) {
+              let oldX = newBalls[currentFrame - 1][lastIndex]["mousePosX"] / newBalls[currentFrame - 1][lastIndex]["imgWidth"]
+              let oldY = newBalls[currentFrame - 1][lastIndex]["mousePosY"] / newBalls[currentFrame - 1][lastIndex]["imgWidth"]
+              let newX = mousePosX / imgWidth
+              let newY = mousePosY / imgWidth
+              return {
+                ...item,
+                mousePosX: mousePosX,
+                mousePosY: mousePosY,
+                imgWidth: imgWidth,
+                isMiddle: true,
+                middleX1: (newX - oldX) * 0.333 + oldX,
+                middleY1: (newY - oldY) * 0.333 + oldY,
+                middleX2: (newX - oldX) * 0.667 + oldX,
+                middleY2: (newY - oldY) * 0.667 + oldY
+              }
+            }
+            else {
+              return {
+                ...item,
+                mousePosX: mousePosX,
+                mousePosY: mousePosY,
+                imgWidth: imgWidth
+              };
+            }
+          }
+          else {
+            return {
+              ...item,
+              mousePosX: mousePosX,
+              mousePosY: mousePosY,
+              imgWidth: imgWidth
+            };
+          }
+        }
+        else return item
+      })
+      setEachFrameBall(newEachFrameBall);
+      const nextNewBalls = newBalls.map((item, index) => {
+        if (index === currentFrame) {
+          return newEachFrameBall
+        }
+        else if (index > currentFrame) {
+          let newEachFrameBall1 = newBalls[index]
+          for (let i = 0; i < newEachFrameBall1.length; i++) {
+            if (newEachFrameBall1[i].id === itemId && newEachFrameBall1[i].isMiddle === false) {
+              newEachFrameBall1[i].mousePosX = mousePosX
+              newEachFrameBall1[i].mousePosY = mousePosY
+              newEachFrameBall1[i].imgWidth = imgWidth
+            }
+          }
+          return newEachFrameBall1
+        }
+        else {
+          return item
+        }
+      })
+      setNewBalls(nextNewBalls)
+    }
+    setIsMiddlePicked(0)
     setDragBallItem(-2)
   }
   let rows = [];
