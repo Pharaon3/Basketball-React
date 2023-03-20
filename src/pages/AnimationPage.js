@@ -94,7 +94,7 @@ function AnimationPage({
   const [dragBallItem, setDragBallItem] = useState(-2)
   const [dropMenuItem, setDropMenuItem] = useState(-1)
   const [rosterShowFlag, setRosterShowFlag] = useState(false)
-  const [currentNumbers, setCurrentNumbers] = useState([1, 1, 1, 1, 1, 1, 1, 1])
+  const [currentNumbers, setCurrentNumbers] = useState([1, 1, 1, 1, 1, 1, 1, 1]) 
   const colorArray = ['red', 'blue', 'brown', 'yellow', 'green', 'white', 'grey', 'black']
   const [drawToolMenuFlag, setDrawToolMenuFlag] = useState(false)
   const [drawTool, setDrawTool] = useState(0)
@@ -113,7 +113,9 @@ function AnimationPage({
   const [isPause, setIsPause] = useState(false)
   const [isRepeat, setIsRepeat] = useState(false)
   const [count, setCount] = useState(0);
-  const [playPos, setPlayPos] = useState([])
+  const [playPosCircle, setPlayPosCircle] = useState([])
+  const [playPosPoint, setPlayPosPoint] = useState([])
+  const [playPosBall, setPlayPosBall] = useState([])
   const [saveKey, setSaveKey] = useState()
   const [open, setOpen] = React.useState(false);
   const modalOpen = () => setOpen(true);
@@ -162,7 +164,6 @@ function AnimationPage({
             }
           }
         })
-
       }
     });
   };
@@ -191,7 +192,6 @@ function AnimationPage({
     if (!document.mozFullScreen && !document.webkitIsFullScreen)
       setFullScreenFlag(false);
     else setFullScreenFlag(true);
-    // console.log("eachFrameCircle", eachFrameCircle)
   });
   useEffect(() => {
     if (!onceFlag) return
@@ -613,6 +613,10 @@ function AnimationPage({
         setCurrentFrame(i)
         if (newCircles.length < i + 1) newCircles.push(eachFrameCircle)
         setEachFrameCircle(newCircles[i])
+        if (newPoints.length < i + 1) newPoints.push(eachFramePoint)
+        setEachFramePoint(newPoints[i])
+        if (newBalls.length < i + 1) newBalls.push(eachFrameBall)
+        setEachFrameBall(newBalls[i])
       }}>
         <FilmIcon />
         <div>{i}</div>
@@ -622,8 +626,7 @@ function AnimationPage({
   const isEqual = (a, b) => JSON.stringify(a) == JSON.stringify(b)
   const makeNewFrame = () => {
     let letframe = frame
-    let letcurrentFrame = currentFrame
-    const lastFrame = newCircles[letframe]?.map((item, index) => {
+    const lastFrameCircle = newCircles[letframe]?.map((item, index) => {
       return {
         ...item,
         isMiddle: false,
@@ -633,7 +636,27 @@ function AnimationPage({
         middleY2: 0
       }
     })
-    if (letframe === 0 && !lastFrame) return
+    const lastFramePoint = newPoints[letframe]?.map((item, index) => {
+      return {
+        ...item,
+        isMiddle: false,
+        middleX1: 0,
+        middleX2: 0,
+        middleY1: 0,
+        middleY2: 0
+      }
+    })
+    const lastFrameBall = newBalls[letframe]?.map((item, index) => {
+      return {
+        ...item,
+        isMiddle: false,
+        middleX1: 0,
+        middleX2: 0,
+        middleY1: 0,
+        middleY2: 0
+      }
+    })
+    if (letframe === 0 && !lastFrameCircle && !lastFramePoint && !lastFrameBall) return
     if (letframe > 0) {
       const comp1 = newCircles[letframe].map((item, index) => {
         return {
@@ -656,15 +679,62 @@ function AnimationPage({
         }
       })
       if (isEqual(comp1, comp2)) return
+      const comp3 = newPoints[letframe].map((item, index) => {
+        return {
+          ...item,
+          isMiddle: false,
+          middleX1: 0,
+          middleX2: 0,
+          middleY1: 0,
+          middleY2: 0
+        }
+      })
+      const comp4 = newPoints[letframe - 1].map((item, index) => {
+        return {
+          ...item,
+          isMiddle: false,
+          middleX1: 0,
+          middleX2: 0,
+          middleY1: 0,
+          middleY2: 0
+        }
+      })
+      if (isEqual(comp3, comp4)) return
+      const comp5 = newBalls[letframe].map((item, index) => {
+        return {
+          ...item,
+          isMiddle: false,
+          middleX1: 0,
+          middleX2: 0,
+          middleY1: 0,
+          middleY2: 0
+        }
+      })
+      const comp6 = newBalls[letframe - 1].map((item, index) => {
+        return {
+          ...item,
+          isMiddle: false,
+          middleX1: 0,
+          middleX2: 0,
+          middleY1: 0,
+          middleY2: 0
+        }
+      })
+      if (isEqual(comp5, comp6)) return
     }
-    newCircles.push(lastFrame)
-    setEachFrameCircle(lastFrame)
+    newCircles.push(lastFrameCircle)
+    setEachFrameCircle(lastFrameCircle)
+    newPoints.push(lastFramePoint)
+    setEachFramePoint(lastFramePoint)
+    newBalls.push(lastFrameBall)
+    setEachFrameBall(lastFrameBall)
     setFrame(letframe + 1);
     setCurrentFrame(letframe + 1);
   }
   const removeFrame = () => {
     let letframe = frame
     if (letframe === 0) return
+    // Circle
     let nextNewCircles = new Array()
     for (let i = 0; i < letframe; i++) {
       nextNewCircles.push(newCircles[i])
@@ -674,6 +744,26 @@ function AnimationPage({
       setCurrentFrame(letframe - 1)
     }
     setNewCircles(nextNewCircles)
+    // Point
+    let nextNewPoints = new Array()
+    for (let i = 0; i < letframe; i++) {
+      nextNewPoints.push(newPoints[i])
+    }
+    if (currentFrame === letframe) {
+      setEachFramePoint(newPoints[letframe - 1])
+      setCurrentFrame(letframe - 1)
+    }
+    setNewPoints(nextNewPoints)
+    // Ball
+    let nextNewBalls = new Array()
+    for (let i = 0; i < letframe; i++) {
+      nextNewBalls.push(newBalls[i])
+    }
+    if (currentFrame === letframe) {
+      setEachFrameBall(newBalls[letframe - 1])
+      setCurrentFrame(letframe - 1)
+    }
+    setNewBalls(nextNewBalls)
     setFrame(letframe - 1)
   }
   useEffect(() => {
@@ -688,8 +778,9 @@ function AnimationPage({
           }
           else {
             let nextFrame = letCurrentFrame > frame - 1 ? 1 : letCurrentFrame + 1
+            // Circle
             let eachFrameCircle2 = newCircles[nextFrame]
-            let letPlayPos = new Array()
+            let letplayPosCircle = new Array()
             for (let index = 0; index < eachFrameCircle2.length; index++) {
               let item = eachFrameCircle2[index]
               if (item.isMiddle) {
@@ -710,15 +801,79 @@ function AnimationPage({
                 ];
                 const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
                 const pts1 = interp1.getPoints(segments);
-                letPlayPos.push(pts1)
+                letplayPosCircle.push(pts1)
               }
               else {
-                letPlayPos.push([item.mousePosX, item.mousePosY])
+                letplayPosCircle.push([item.mousePosX, item.mousePosY])
               }
             }
             setCurrentFrame(nextFrame)
             setEachFrameCircle(newCircles[nextFrame])
-            setPlayPos(letPlayPos)
+            setPlayPosCircle(letplayPosCircle)
+            // Point
+            let eachFramePoint2 = newPoints[nextFrame]
+            let letplayPosPoint = new Array()
+            for (let index = 0; index < eachFramePoint2.length; index++) {
+              let item = eachFramePoint2[index]
+              if (item.isMiddle) {
+                let oldOne = newPoints[nextFrame - 1][index]
+                let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
+                let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
+                let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
+                let y2 = item.mousePosY * imgWidth / item.imgWidth
+                let xm1 = item.middleX1 * imgWidth
+                let ym1 = item.middleY1 * imgWidth
+                let xm2 = item.middleX2 * imgWidth
+                let ym2 = item.middleY2 * imgWidth
+                const points = [
+                  [x1, y1],
+                  [xm1, ym1],
+                  [xm2, ym2],
+                  [x2, y2]
+                ];
+                const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+                const pts1 = interp1.getPoints(segments);
+                letplayPosPoint.push(pts1)
+              }
+              else {
+                letplayPosPoint.push([item.mousePosX, item.mousePosY])
+              }
+            }
+            setCurrentFrame(nextFrame)
+            setEachFramePoint(newPoints[nextFrame])
+            setPlayPosPoint(letplayPosPoint)
+            // Ball
+            let eachFrameBall2 = newBalls[nextFrame]
+            let letplayPosBall = new Array()
+            for (let index = 0; index < eachFrameBall2.length; index++) {
+              let item = eachFrameBall2[index]
+              if (item.isMiddle) {
+                let oldOne = newBalls[nextFrame - 1][index]
+                let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
+                let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
+                let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
+                let y2 = item.mousePosY * imgWidth / item.imgWidth
+                let xm1 = item.middleX1 * imgWidth
+                let ym1 = item.middleY1 * imgWidth
+                let xm2 = item.middleX2 * imgWidth
+                let ym2 = item.middleY2 * imgWidth
+                const points = [
+                  [x1, y1],
+                  [xm1, ym1],
+                  [xm2, ym2],
+                  [x2, y2]
+                ];
+                const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+                const pts1 = interp1.getPoints(segments);
+                letplayPosBall.push(pts1)
+              }
+              else {
+                letplayPosBall.push([item.mousePosX, item.mousePosY])
+              }
+            }
+            setCurrentFrame(nextFrame)
+            setEachFrameBall(newBalls[nextFrame])
+            setPlayPosBall(letplayPosBall)
           }
         }
         // setCount((count) => count > segments - 1 ? 0 : count + 1);
@@ -739,8 +894,8 @@ function AnimationPage({
     else {
       setIsPlay(true)
       setCount(0)
-
-      let letPlayPos = new Array()
+      // Circle
+      let letPlayPosCircle = new Array()
       for (let index = 0; index < eachFrameCircle.length; index++) {
         let item = eachFrameCircle[index]
         if (item.isMiddle) {
@@ -761,13 +916,71 @@ function AnimationPage({
           ];
           const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
           const pts1 = interp1.getPoints(segments);
-          letPlayPos.push(pts1)
+          letPlayPosCircle.push(pts1)
         }
         else {
-          letPlayPos.push([item.mousePosX, item.mousePosY])
+          letPlayPosCircle.push([item.mousePosX, item.mousePosY])
         }
       }
-      setPlayPos(letPlayPos)
+      setPlayPosCircle(letPlayPosCircle)
+      // Point
+      let letPlayPosPoint = new Array()
+      for (let index = 0; index < eachFramePoint.length; index++) {
+        let item = eachFramePoint[index]
+        if (item.isMiddle) {
+          let oldOne = newPoints[currentFrame - 1][index]
+          let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
+          let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
+          let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
+          let y2 = item.mousePosY * imgWidth / item.imgWidth
+          let xm1 = item.middleX1 * imgWidth
+          let ym1 = item.middleY1 * imgWidth
+          let xm2 = item.middleX2 * imgWidth
+          let ym2 = item.middleY2 * imgWidth
+          const points = [
+            [x1, y1],
+            [xm1, ym1],
+            [xm2, ym2],
+            [x2, y2]
+          ];
+          const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+          const pts1 = interp1.getPoints(segments);
+          letPlayPosPoint.push(pts1)
+        }
+        else {
+          letPlayPosPoint.push([item.mousePosX, item.mousePosY])
+        }
+      }
+      setPlayPosPoint(letPlayPosPoint)
+      // Ball
+      let letPlayPosBall = new Array()
+      for (let index = 0; index < eachFrameBall.length; index++) {
+        let item = eachFrameBall[index]
+        if (item.isMiddle) {
+          let oldOne = newBalls[currentFrame - 1][index]
+          let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
+          let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
+          let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
+          let y2 = item.mousePosY * imgWidth / item.imgWidth
+          let xm1 = item.middleX1 * imgWidth
+          let ym1 = item.middleY1 * imgWidth
+          let xm2 = item.middleX2 * imgWidth
+          let ym2 = item.middleY2 * imgWidth
+          const points = [
+            [x1, y1],
+            [xm1, ym1],
+            [xm2, ym2],
+            [x2, y2]
+          ];
+          const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+          const pts1 = interp1.getPoints(segments);
+          letPlayPosBall.push(pts1)
+        }
+        else {
+          letPlayPosBall.push([item.mousePosX, item.mousePosY])
+        }
+      }
+      setPlayPosBall(letPlayPosBall)
     }
   }
   const playAll = () => {
@@ -779,8 +992,8 @@ function AnimationPage({
       setIsPlayAll(true)
       setCount(0)
       setCurrentFrame(1)
-
-      let letPlayPos = new Array()
+      // Circle
+      let letPlayPosCircle = new Array()
       for (let index = 0; index < eachFrameCircle.length; index++) {
         let item = eachFrameCircle[index]
         if (item.isMiddle) {
@@ -801,13 +1014,71 @@ function AnimationPage({
           ];
           const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
           const pts1 = interp1.getPoints(segments);
-          letPlayPos.push(pts1)
+          letPlayPosCircle.push(pts1)
         }
         else {
-          letPlayPos.push([item.mousePosX, item.mousePosY])
+          letPlayPosCircle.push([item.mousePosX, item.mousePosY])
         }
       }
-      setPlayPos(letPlayPos)
+      setPlayPosCircle(letPlayPosCircle)
+      // Point
+      let letPlayPosPoint = new Array()
+      for (let index = 0; index < eachFramePoint.length; index++) {
+        let item = eachFramePoint[index]
+        if (item.isMiddle) {
+          let oldOne = newPoints[currentFrame - 1][index]
+          let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
+          let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
+          let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
+          let y2 = item.mousePosY * imgWidth / item.imgWidth
+          let xm1 = item.middleX1 * imgWidth
+          let ym1 = item.middleY1 * imgWidth
+          let xm2 = item.middleX2 * imgWidth
+          let ym2 = item.middleY2 * imgWidth
+          const points = [
+            [x1, y1],
+            [xm1, ym1],
+            [xm2, ym2],
+            [x2, y2]
+          ];
+          const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+          const pts1 = interp1.getPoints(segments);
+          letPlayPosPoint.push(pts1)
+        }
+        else {
+          letPlayPosPoint.push([item.mousePosX, item.mousePosY])
+        }
+      }
+      setPlayPosPoint(letPlayPosPoint)
+      // Ball
+      let letPlayPosBall = new Array()
+      for (let index = 0; index < eachFrameBall.length; index++) {
+        let item = eachFrameBall[index]
+        if (item.isMiddle) {
+          let oldOne = newBalls[currentFrame - 1][index]
+          let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
+          let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
+          let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
+          let y2 = item.mousePosY * imgWidth / item.imgWidth
+          let xm1 = item.middleX1 * imgWidth
+          let ym1 = item.middleY1 * imgWidth
+          let xm2 = item.middleX2 * imgWidth
+          let ym2 = item.middleY2 * imgWidth
+          const points = [
+            [x1, y1],
+            [xm1, ym1],
+            [xm2, ym2],
+            [x2, y2]
+          ];
+          const interp1 = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+          const pts1 = interp1.getPoints(segments);
+          letPlayPosBall.push(pts1)
+        }
+        else {
+          letPlayPosBall.push([item.mousePosX, item.mousePosY])
+        }
+      }
+      setPlayPosBall(letPlayPosBall)
     }
   }
   const pause = () => {
@@ -1005,6 +1276,116 @@ function AnimationPage({
                   }
                 })
               }
+              {
+                eachFramePoint?.map((item, index) => {
+                  if (!isPlay) {
+                    if (item.isMiddle) {
+                      let lastIndex = canMiddlePoint(item.id)
+                      let oldOne = newPoints[currentFrame - 1][lastIndex]
+                      let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
+                      let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
+                      let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
+                      let y2 = item.mousePosY * imgWidth / item.imgWidth
+                      let xm1 = item.middleX1 * imgWidth
+                      let ym1 = item.middleY1 * imgWidth
+                      let xm2 = item.middleX2 * imgWidth
+                      let ym2 = item.middleY2 * imgWidth
+                      if (dragPointItem === index || (dragPointItem === -1 && index === eachFramePoint?.length - 1)) {
+                        if (isMiddlePicked == 1) {
+                          xm1 = mousePosX
+                          ym1 = mousePosY
+                        }
+                        else if (isMiddlePicked == 2) {
+                          xm2 = mousePosX
+                          ym2 = mousePosY
+                        }
+                        else {
+                          x2 = mousePosX
+                          y2 = mousePosY
+                        }
+                      }
+                      const points = [
+                        [x1, y1],
+                        [xm1, ym1],
+                        [xm2, ym2],
+                        [x2, y2]
+                      ];
+                      let curvLine = [];
+                      const interp = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+                      const pts = interp.getPoints(segments);
+                      for (let i = 0; i < segments - 2; i++) {
+                        curvLine.push(
+                          <NaturalCurve strokeDasharray="5" key={"curveLine" + i} data={[[pts[i][0], pts[i][1]], [pts[i + 1][0], pts[i + 1][1]]]} showPoints={false} />
+                        );
+                      }
+                      return (
+                        <g key={"track-" + index}>
+                          {/* <line strokeDasharray="4" stroke="#555" x1={x1} y1={y1} x2={xm} y2={ym} strokeWidth="3">
+                          </line>
+                          <line strokeDasharray="4" stroke="#555" x1={xm} y1={ym} x2={x2} y2={y2} strokeWidth="3">
+                          </line> */}
+                          {curvLine}
+                        </g>
+                      )
+                    }
+                  }
+                })
+              }
+              {
+                eachFrameBall?.map((item, index) => {
+                  if (!isPlay) {
+                    if (item.isMiddle) {
+                      let lastIndex = canMiddleBall(item.id)
+                      let oldOne = newBalls[currentFrame - 1][lastIndex]
+                      let x1 = oldOne["mousePosX"] * imgWidth / oldOne["imgWidth"]
+                      let x2 = item["mousePosX"] * imgWidth / item["imgWidth"]
+                      let y1 = oldOne["mousePosY"] * imgWidth / oldOne["imgWidth"]
+                      let y2 = item.mousePosY * imgWidth / item.imgWidth
+                      let xm1 = item.middleX1 * imgWidth
+                      let ym1 = item.middleY1 * imgWidth
+                      let xm2 = item.middleX2 * imgWidth
+                      let ym2 = item.middleY2 * imgWidth
+                      if (dragBallItem === index || (dragBallItem === -1 && index === eachFrameBall?.length - 1)) {
+                        if (isMiddlePicked == 1) {
+                          xm1 = mousePosX
+                          ym1 = mousePosY
+                        }
+                        else if (isMiddlePicked == 2) {
+                          xm2 = mousePosX
+                          ym2 = mousePosY
+                        }
+                        else {
+                          x2 = mousePosX
+                          y2 = mousePosY
+                        }
+                      }
+                      const points = [
+                        [x1, y1],
+                        [xm1, ym1],
+                        [xm2, ym2],
+                        [x2, y2]
+                      ];
+                      let curvLine = [];
+                      const interp = new CurveInterpolator(points, { tension: 0, alpha: 0.3 });
+                      const pts = interp.getPoints(segments);
+                      for (let i = 0; i < segments - 2; i++) {
+                        curvLine.push(
+                          <NaturalCurve strokeDasharray="5" key={"curveLine" + i} data={[[pts[i][0], pts[i][1]], [pts[i + 1][0], pts[i + 1][1]]]} showPoints={false} />
+                        );
+                      }
+                      return (
+                        <g key={"track-" + index}>
+                          {/* <line strokeDasharray="4" stroke="#555" x1={x1} y1={y1} x2={xm} y2={ym} strokeWidth="3">
+                          </line>
+                          <line strokeDasharray="4" stroke="#555" x1={xm} y1={ym} x2={x2} y2={y2} strokeWidth="3">
+                          </line> */}
+                          {curvLine}
+                        </g>
+                      )
+                    }
+                  }
+                })
+              }
             </svg>
             <div id="new-circles" style={(drawTool !== 0) ? { pointerEvents: 'none' } : {}}>
               {
@@ -1017,6 +1398,40 @@ function AnimationPage({
                       const defaultStyle = { top: `${oldOne?.mousePosY * (imgWidth / oldOne?.imgWidth) - positionCircleDiff}px`, left: `${oldOne?.mousePosX * (imgWidth / oldOne?.imgWidth) - positionCircleDiff}px` }
                       return (
                         <div className={'circle old'} key={"old-circle-" + index} id={"old-circle-" + index} style={defaultStyle}>
+                          {item?.number}
+                        </div>
+                      )
+                    }
+                  }
+                })
+              }
+              {
+                eachFramePoint?.map((item, index) => {
+                  if (!isPlay) {
+                    var contextFlag = false
+                    if (item.isMiddle) {
+                      let lastIndex = canMiddlePoint(item.id)
+                      let oldOne = newPoints[currentFrame - 1][lastIndex]
+                      const defaultStyle = { top: `${oldOne?.mousePosY * (imgWidth / oldOne?.imgWidth) - positionPointDiff}px`, left: `${oldOne?.mousePosX * (imgWidth / oldOne?.imgWidth) - positionPointDiff}px` }
+                      return (
+                        <div className={'point old'} key={"old-point-" + index} id={"old-point-" + index} style={defaultStyle}>
+                          {item?.number}
+                        </div>
+                      )
+                    }
+                  }
+                })
+              }
+              {
+                eachFrameBall?.map((item, index) => {
+                  if (!isPlay) {
+                    var contextFlag = false
+                    if (item.isMiddle) {
+                      let lastIndex = canMiddleBall(item.id)
+                      let oldOne = newBalls[currentFrame - 1][lastIndex]
+                      const defaultStyle = { top: `${oldOne?.mousePosY * (imgWidth / oldOne?.imgWidth) - positionBallDiff}px`, left: `${oldOne?.mousePosX * (imgWidth / oldOne?.imgWidth) - positionBallDiff}px` }
+                      return (
+                        <div className={'ball old'} key={"old-ball-" + index} id={"old-ball-" + index} style={defaultStyle}>
                           {item?.number}
                         </div>
                       )
@@ -1070,13 +1485,104 @@ function AnimationPage({
                 })
               }
               {
-                eachFrameCircle?.map((item, index) => {
-                  let playPosX = item.mousePosX, playPosY = item.mousePosY
-                  if (item.isMiddle && isPlay) {
-                    playPosX = playPos[index][count][0]
-                    playPosY = playPos[index][count][1]
+                eachFramePoint?.map((item, index) => {
+                  if (!isPlay) {
+                    const dragStyle = { top: `${mousePosY - positionPointDiff}px`, left: `${mousePosX - positionPointDiff}px` }
+                    // const dragStyle = { display: 'none' }
+                    var contextFlag = false
+                    if (item.isMiddle) {
+                      const defaultStyle1 = { top: `${item?.middleY1 * imgWidth - positionPointDiff}px`, left: `${item?.middleX1 * imgWidth - positionPointDiff}px` }
+                      const defaultStyle2 = { top: `${item?.middleY2 * imgWidth - positionPointDiff}px`, left: `${item?.middleX2 * imgWidth - positionPointDiff}px` }
+                      return (
+                        <div key={"new-point-middle-" + index}>
+                          <div className='point middle'
+                            style={(dragPointItem === index && isMiddlePicked === 1 || (dragPointItem === -1 && index === eachFramePoint?.length - 1 && isMiddlePicked === 1)) ? dragStyle : defaultStyle1}
+                            onMouseDown={(e) => {
+                              if (e.button === 2) return
+                              setIsMiddlePicked(1)
+                              pointPicked(false, index, "")
+                            }}
+                            onTouchStart={() => {
+                              if (contextFlag) return
+                              setIsMiddlePicked(1)
+                              pointPicked(false, index, "")
+                            }}>
+                            {item?.number}
+                          </div>
+                          <div className='point middle'
+                            style={(dragPointItem === index && isMiddlePicked === 2 || (dragPointItem === -1 && index === eachFramePoint?.length - 1 && isMiddlePicked === 2)) ? dragStyle : defaultStyle2}
+                            onMouseDown={(e) => {
+                              if (e.button === 2) return
+                              setIsMiddlePicked(2)
+                              pointPicked(false, index, "")
+                            }}
+                            onTouchStart={() => {
+                              if (contextFlag) return
+                              setIsMiddlePicked(2)
+                              pointPicked(false, index, "")
+                            }}>
+                            {item?.number}
+                          </div>
+                        </div>
+                      )
+                    }
                   }
-                  const defaultStyle = isPlay ? { top: `${playPosY * (imgWidth / item?.imgWidth) - positionCircleDiff}px`, left: `${playPosX * (imgWidth / item?.imgWidth) - positionCircleDiff}px` }
+                })
+              }
+              {
+                eachFrameBall?.map((item, index) => {
+                  if (!isPlay) {
+                    const dragStyle = { top: `${mousePosY - positionBallDiff}px`, left: `${mousePosX - positionBallDiff}px` }
+                    // const dragStyle = { display: 'none' }
+                    var contextFlag = false
+                    if (item.isMiddle) {
+                      const defaultStyle1 = { top: `${item?.middleY1 * imgWidth - positionBallDiff}px`, left: `${item?.middleX1 * imgWidth - positionBallDiff}px` }
+                      const defaultStyle2 = { top: `${item?.middleY2 * imgWidth - positionBallDiff}px`, left: `${item?.middleX2 * imgWidth - positionBallDiff}px` }
+                      return (
+                        <div key={"new-ball-middle-" + index}>
+                          <div className='ball middle'
+                            style={(dragBallItem === index && isMiddlePicked === 1 || (dragBallItem === -1 && index === eachFrameBall?.length - 1 && isMiddlePicked === 1)) ? dragStyle : defaultStyle1}
+                            onMouseDown={(e) => {
+                              if (e.button === 2) return
+                              setIsMiddlePicked(1)
+                              ballPicked(false, index, "")
+                            }}
+                            onTouchStart={() => {
+                              if (contextFlag) return
+                              setIsMiddlePicked(1)
+                              ballPicked(false, index, "")
+                            }}>
+                            {item?.number}
+                          </div>
+                          <div className='ball middle'
+                            style={(dragBallItem === index && isMiddlePicked === 2 || (dragBallItem === -1 && index === eachFrameBall?.length - 1 && isMiddlePicked === 2)) ? dragStyle : defaultStyle2}
+                            onMouseDown={(e) => {
+                              if (e.button === 2) return
+                              setIsMiddlePicked(2)
+                              ballPicked(false, index, "")
+                            }}
+                            onTouchStart={() => {
+                              if (contextFlag) return
+                              setIsMiddlePicked(2)
+                              ballPicked(false, index, "")
+                            }}>
+                            {item?.number}
+                          </div>
+                        </div>
+                      )
+                    }
+                  }
+                })
+              }
+              {
+                eachFrameCircle?.map((item, index) => {
+                  let PlayPosCircleX = item.mousePosX, PlayPosCircleY = item.mousePosY
+                  if (item.isMiddle && isPlay) {
+                    PlayPosCircleX = playPosCircle[index][count][0]
+                    PlayPosCircleY = playPosCircle[index][count][1]
+                  }
+                  const defaultStyle = isPlay 
+                    ? { top: `${PlayPosCircleY * (imgWidth / item?.imgWidth) - positionCircleDiff}px`, left: `${PlayPosCircleX * (imgWidth / item?.imgWidth) - positionCircleDiff}px` }
                     : { top: `${item?.mousePosY * (imgWidth / item?.imgWidth) - positionCircleDiff}px`, left: `${item?.mousePosX * (imgWidth / item?.imgWidth) - positionCircleDiff}px` }
                   const dragStyle = { top: `${mousePosY - positionCircleDiff}px`, left: `${mousePosX - positionCircleDiff}px` }
                   var contextFlag = false
@@ -1160,13 +1666,13 @@ function AnimationPage({
               }
               {
                 eachFramePoint?.map((item, index) => {
-                  let playPosX = item.mousePosX, playPosY = item.mousePosY
+                  let PlayPosPointX = item.mousePosX, PlayPosPointY = item.mousePosY
                   if (item.isMiddle && isPlay) {
-                    playPosX = playPos[index][count][0]
-                    playPosY = playPos[index][count][1]
+                    PlayPosPointX = playPosPoint[index][count][0]
+                    PlayPosPointY = playPosPoint[index][count][1]
                   }
                   const defaultStyle = isPlay 
-                    ? { top: `${playPosY * (imgWidth / item?.imgWidth) - positionPointDiff}px`, left: `${playPosX * (imgWidth / item?.imgWidth) - positionPointDiff}px` }
+                    ? { top: `${PlayPosPointY * (imgWidth / item?.imgWidth) - positionPointDiff}px`, left: `${PlayPosPointX * (imgWidth / item?.imgWidth) - positionPointDiff}px` }
                     : { top: `${item?.mousePosY * (imgWidth / item?.imgWidth) - positionPointDiff}px`, left: `${item?.mousePosX * (imgWidth / item?.imgWidth) - positionPointDiff}px` }
                   const dragStyle = { top: `${mousePosY - positionPointDiff}px`, left: `${mousePosX - positionPointDiff}px` }
                   var contextFlag = false
@@ -1185,7 +1691,12 @@ function AnimationPage({
                       onContextMenu={(e) => {
                         contextFlag = true
                         e.preventDefault()
-                        // setNewPoints([...newPoints?.slice(0, index), ...newPoints?.slice(index + 1)])
+                        // setEachFramePoint([...eachFramePoint?.slice(0, index), ...eachFramePoint?.slice(index + 1)])
+                        var nexteachFramePoint = [...eachFramePoint?.slice(0, index), ...eachFramePoint?.slice(index + 1)]
+                          setEachFramePoint(nexteachFramePoint)
+                          var nextNewPoints = newPoints
+                          nextNewPoints[currentFrame] = nexteachFramePoint
+                          setNewPoints(nextNewPoints)
                       }}
                       onTouchEnd={() => {
                         contextFlag = false
@@ -1195,8 +1706,16 @@ function AnimationPage({
                 })
               }
               {
-                newBalls?.map((item, index) => {
-                  const defaultStyle = { top: `${item?.mousePosY * (imgWidth / item?.imgWidth) - positionBallDiff}px`, left: `${item?.mousePosX * (imgWidth / item?.imgWidth) - positionBallDiff}px` }
+                eachFrameBall?.map((item, index) => {
+                  let PlayPosBallX = item.mousePosX, PlayPosBallY = item.mousePosY
+                  if (item.isMiddle && isPlay) {
+                    PlayPosBallX = playPosBall[index][count][0]
+                    PlayPosBallY = playPosBall[index][count][1]
+                  }
+                  const defaultStyle = isPlay 
+                    ? { top: `${PlayPosBallY * (imgWidth / item?.imgWidth) - positionBallDiff}px`, left: `${PlayPosBallX * (imgWidth / item?.imgWidth) - positionBallDiff}px` }
+                    : { top: `${item?.mousePosY * (imgWidth / item?.imgWidth) - positionBallDiff}px`, left: `${item?.mousePosX * (imgWidth / item?.imgWidth) - positionBallDiff}px` }
+                  
                   const dragStyle = { top: `${mousePosY - positionBallDiff}px`, left: `${mousePosX - positionBallDiff}px` }
                   var contextFlag = false
                   return (
@@ -1215,7 +1734,12 @@ function AnimationPage({
                         contextFlag = true
                         e.preventDefault()
                         //Delete...................................................................
-                        setNewBalls([...newBalls?.slice(0, index), ...newBalls?.slice(index + 1)])
+                        // setEachFrameBall([...eachFrameBall?.slice(0, index), ...eachFrameBall?.slice(index + 1)])
+                        var nexteachFrameBall = [...eachFrameBall?.slice(0, index), ...eachFrameBall?.slice(index + 1)]
+                          setEachFrameBall(nexteachFrameBall)
+                          var nextNewBalls = newBalls
+                          nextNewBalls[currentFrame] = nexteachFrameBall
+                          setNewBalls(nextNewBalls)
                       }}
                       onTouchEnd={() => {
                         contextFlag = false
