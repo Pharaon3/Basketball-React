@@ -13,9 +13,9 @@ import { ReactComponent as DownloadIcon } from "../assets/svg/download.svg";
 import { ReactComponent as FieldIcon } from "../assets/svg/field.svg";
 import { ReactComponent as MinimizeIcon } from "../assets/svg/minimize.svg";
 import { ReactComponent as MaximizeIcon } from "../assets/svg/maximize.svg";
-import { ReactComponent as VideoIcon } from "../assets/svg/video.svg";
+// import { ReactComponent as VideoIcon } from "../assets/svg/video.svg";
 import { ReactComponent as FilmIcon } from "../assets/svg/film.svg";
-import { ReactComponent as PlusIcon } from "../assets/svg/plus.svg";
+// import { ReactComponent as PlusIcon } from "../assets/svg/plus.svg";
 import { ReactComponent as BackArrowIcon } from "../assets/svg/corner-down-left.svg";
 // import { ReactComponent as UsersIcon } from "../assets/svg/users.svg"; 
 
@@ -24,7 +24,7 @@ import { ReactComponent as HelpCircleIcon } from "../assets/svg/help-circle.svg"
 import { ReactComponent as LogInIcon } from "../assets/svg/log-in.svg";
 
 import { ReactComponent as PlayIcon } from "../assets/svg/play.svg";
-import { ReactComponent as PlayRoundIcon } from "../assets/svg/play-round.svg";
+// import { ReactComponent as PlayRoundIcon } from "../assets/svg/play-round.svg";
 import { ReactComponent as PlayCircleIcon } from "../assets/svg/play-circle.svg";
 import { ReactComponent as PauseIcon } from "../assets/svg/pause.svg";
 // import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
@@ -43,7 +43,7 @@ import { ReactComponent as CircleIcon } from "../assets/svg/circle.svg";
 import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
 import { ReactComponent as TypeIcon } from "../assets/svg/type.svg";
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { CurveInterpolator } from 'curve-interpolator';
@@ -54,7 +54,7 @@ import {
 import mainLogo from "../assets/logo.png";
 import html2canvas from "html2canvas";
 import SceneWithDrawables from "../components/SceneWithDrawables";
-import { collection, getDocs, addDoc, QuerySnapshot } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 import { firestore } from "../firebase_setup/firebase";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 var onceFlag = true
@@ -134,7 +134,7 @@ function AnimationPage({
         })
       });
       if (newData) {
-        newData.map((item, index) => {
+        newData.map((item) => {
           if (item && item.pid) {
             if (item.pid === key) {
               const originState = JSON.parse(item.state)
@@ -143,11 +143,6 @@ function AnimationPage({
               const originNewCircles = originState[2]
               const originNewPoints = originState[3]
               const originNewBalls = originState[4]
-              console.log("originState", originState)
-              console.log("originCurrentNumbers", originCurrentNumbers)
-              console.log("originNewCircles", originNewCircles)
-              console.log("originNewPoints", originNewPoints)
-              console.log("originNewBalls", originNewBalls)
               setCircleId(originIds[0])
               setPointId(originIds[1])
               setBallId(originIds[2])
@@ -281,8 +276,8 @@ function AnimationPage({
           return newEachFrameCircle
         }
         else if (index > currentFrame) {
-          let letItem = new Array()
-          letItem = [...item, newObject]
+          // let letItem = new Array([])
+          // let letItem = [...item, newObject]
           return [...item, newObject]
         }
         else {
@@ -309,14 +304,14 @@ function AnimationPage({
           if (currentFrame > 0) {
             let lastIndex = canMiddleCircle(item.id)
             if (lastIndex !== false) {
-              if (isMiddlePicked == 1) {
+              if (isMiddlePicked === 1) {
                 return {
                   ...item,
                   middleX1: mousePosX / imgWidth,
                   middleY1: mousePosY / imgWidth
                 }
               }
-              if (isMiddlePicked == 2) {
+              if (isMiddlePicked === 2) {
                 return {
                   ...item,
                   middleX2: mousePosX / imgWidth,
@@ -443,8 +438,6 @@ function AnimationPage({
           return newEachFramePoint
         }
         else if (index > currentFrame) {
-          let letItem = new Array()
-          letItem = [...item, newObject]
           return [...item, newObject]
         }
         else {
@@ -456,8 +449,6 @@ function AnimationPage({
         setNewPoints(newEachFramePoint)
       }
     }
-    console.log("eachFramePoint", eachFramePoint)
-    console.log("newPoints", newPoints)
   }
   const pointReleased = () => {
     if (dragPointItem === -2) return
@@ -468,14 +459,14 @@ function AnimationPage({
           if (currentFrame > 0) {
             let lastIndex = canMiddlePoint(item.id)
             if (lastIndex !== false) {
-              if (isMiddlePicked == 1) {
+              if (isMiddlePicked === 1) {
                 return {
                   ...item,
                   middleX1: mousePosX / imgWidth,
                   middleY1: mousePosY / imgWidth
                 }
               }
-              if (isMiddlePicked == 2) {
+              if (isMiddlePicked === 2) {
                 return {
                   ...item,
                   middleX2: mousePosX / imgWidth,
@@ -604,8 +595,6 @@ function AnimationPage({
           return newEachFrameBall
         }
         else if (index > currentFrame) {
-          let letItem = new Array()
-          letItem = [...item, newObject]
           return [...item, newObject]
         }
         else {
@@ -627,14 +616,14 @@ function AnimationPage({
           if (currentFrame > 0) {
             let lastIndex = canMiddleBall(item.id)
             if (lastIndex !== false) {
-              if (isMiddlePicked == 1) {
+              if (isMiddlePicked === 1) {
                 return {
                   ...item,
                   middleX1: mousePosX / imgWidth,
                   middleY1: mousePosY / imgWidth
                 }
               }
-              if (isMiddlePicked == 2) {
+              if (isMiddlePicked === 2) {
                 return {
                   ...item,
                   middleX2: mousePosX / imgWidth,
@@ -754,10 +743,10 @@ function AnimationPage({
       </div>
     );
   }
-  const isEqual = (a, b) => JSON.stringify(a) == JSON.stringify(b)
+  const isEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b)
   const makeNewFrame = () => {
     let letframe = frame
-    const lastFrameCircle = newCircles[letframe]?.map((item, index) => {
+    const lastFrameCircle = newCircles[letframe]?.map((item) => {
       return {
         ...item,
         isMiddle: false,
@@ -767,7 +756,7 @@ function AnimationPage({
         middleY2: 0
       }
     })
-    const lastFramePoint = newPoints[letframe]?.map((item, index) => {
+    const lastFramePoint = newPoints[letframe]?.map((item) => {
       return {
         ...item,
         isMiddle: false,
@@ -777,7 +766,7 @@ function AnimationPage({
         middleY2: 0
       }
     })
-    const lastFrameBall = newBalls[letframe]?.map((item, index) => {
+    const lastFrameBall = newBalls[letframe]?.map((item) => {
       return {
         ...item,
         isMiddle: false,
@@ -789,7 +778,7 @@ function AnimationPage({
     })
     if (letframe === 0 && !lastFrameCircle && !lastFramePoint && !lastFrameBall) return
     if (letframe > 0) {
-      const comp1 = newCircles[letframe].map((item, index) => {
+      const comp1 = newCircles[letframe].map((item) => {
         return {
           ...item,
           isMiddle: false,
@@ -799,7 +788,7 @@ function AnimationPage({
           middleY2: 0
         }
       })
-      const comp2 = newCircles[letframe - 1].map((item, index) => {
+      const comp2 = newCircles[letframe - 1].map((item) => {
         return {
           ...item,
           isMiddle: false,
@@ -810,7 +799,7 @@ function AnimationPage({
         }
       })
       if (isEqual(comp1, comp2)) return
-      const comp3 = newPoints[letframe].map((item, index) => {
+      const comp3 = newPoints[letframe].map((item) => {
         return {
           ...item,
           isMiddle: false,
@@ -820,7 +809,7 @@ function AnimationPage({
           middleY2: 0
         }
       })
-      const comp4 = newPoints[letframe - 1].map((item, index) => {
+      const comp4 = newPoints[letframe - 1].map((item) => {
         return {
           ...item,
           isMiddle: false,
@@ -831,7 +820,7 @@ function AnimationPage({
         }
       })
       if (isEqual(comp3, comp4)) return
-      const comp5 = newBalls[letframe].map((item, index) => {
+      const comp5 = newBalls[letframe].map((item) => {
         return {
           ...item,
           isMiddle: false,
@@ -841,7 +830,7 @@ function AnimationPage({
           middleY2: 0
         }
       })
-      const comp6 = newBalls[letframe - 1].map((item, index) => {
+      const comp6 = newBalls[letframe - 1].map((item) => {
         return {
           ...item,
           isMiddle: false,
@@ -866,7 +855,7 @@ function AnimationPage({
     let letframe = frame
     if (letframe === 0) return
     // Circle
-    let nextNewCircles = new Array()
+    let nextNewCircles = new Array([])
     for (let i = 0; i < letframe; i++) {
       nextNewCircles.push(newCircles[i])
     }
@@ -876,7 +865,7 @@ function AnimationPage({
     }
     setNewCircles(nextNewCircles)
     // Point
-    let nextNewPoints = new Array()
+    let nextNewPoints = new Array([])
     for (let i = 0; i < letframe; i++) {
       nextNewPoints.push(newPoints[i])
     }
@@ -886,7 +875,7 @@ function AnimationPage({
     }
     setNewPoints(nextNewPoints)
     // Ball
-    let nextNewBalls = new Array()
+    let nextNewBalls = new Array([])
     for (let i = 0; i < letframe; i++) {
       nextNewBalls.push(newBalls[i])
     }
@@ -901,9 +890,9 @@ function AnimationPage({
     setTimeout(() => {
       if (!isPause && isPlay) {
         let letCount = count
-        if (isPlayAll == true && letCount > segments - 1) {
+        if (isPlayAll === true && letCount > segments - 1) {
           let letCurrentFrame = currentFrame
-          if (!isRepeat && letCurrentFrame == frame) {
+          if (!isRepeat && letCurrentFrame === frame) {
             setIsPlay(false)
             setIsPlayAll(false)
           }
@@ -911,7 +900,7 @@ function AnimationPage({
             let nextFrame = letCurrentFrame > frame - 1 ? 1 : letCurrentFrame + 1
             // Circle
             let eachFrameCircle2 = newCircles[nextFrame]
-            let letplayPosCircle = new Array()
+            let letplayPosCircle = new Array([])
             for (let index = 0; index < eachFrameCircle2.length; index++) {
               let item = eachFrameCircle2[index]
               if (item.isMiddle) {
@@ -943,7 +932,7 @@ function AnimationPage({
             setPlayPosCircle(letplayPosCircle)
             // Point
             let eachFramePoint2 = newPoints[nextFrame]
-            let letplayPosPoint = new Array()
+            let letplayPosPoint = new Array([])
             for (let index = 0; index < eachFramePoint2.length; index++) {
               let item = eachFramePoint2[index]
               if (item.isMiddle) {
@@ -975,7 +964,7 @@ function AnimationPage({
             setPlayPosPoint(letplayPosPoint)
             // Ball
             let eachFrameBall2 = newBalls[nextFrame]
-            let letplayPosBall = new Array()
+            let letplayPosBall = new Array([])
             for (let index = 0; index < eachFrameBall2.length; index++) {
               let item = eachFrameBall2[index]
               if (item.isMiddle) {
@@ -1026,7 +1015,7 @@ function AnimationPage({
       setIsPlay(true)
       setCount(0)
       // Circle
-      let letPlayPosCircle = new Array()
+      let letPlayPosCircle = new Array([])
       for (let index = 0; index < eachFrameCircle.length; index++) {
         let item = eachFrameCircle[index]
         if (item.isMiddle) {
@@ -1055,7 +1044,7 @@ function AnimationPage({
       }
       setPlayPosCircle(letPlayPosCircle)
       // Point
-      let letPlayPosPoint = new Array()
+      let letPlayPosPoint = new Array([])
       for (let index = 0; index < eachFramePoint.length; index++) {
         let item = eachFramePoint[index]
         if (item.isMiddle) {
@@ -1084,7 +1073,7 @@ function AnimationPage({
       }
       setPlayPosPoint(letPlayPosPoint)
       // Ball
-      let letPlayPosBall = new Array()
+      let letPlayPosBall = new Array([])
       for (let index = 0; index < eachFrameBall.length; index++) {
         let item = eachFrameBall[index]
         if (item.isMiddle) {
@@ -1124,7 +1113,7 @@ function AnimationPage({
       setCount(0)
       setCurrentFrame(1)
       // Circle
-      let letPlayPosCircle = new Array()
+      let letPlayPosCircle = new Array([])
       for (let index = 0; index < eachFrameCircle.length; index++) {
         let item = eachFrameCircle[index]
         if (item.isMiddle) {
@@ -1153,7 +1142,7 @@ function AnimationPage({
       }
       setPlayPosCircle(letPlayPosCircle)
       // Point
-      let letPlayPosPoint = new Array()
+      let letPlayPosPoint = new Array([])
       for (let index = 0; index < eachFramePoint.length; index++) {
         let item = eachFramePoint[index]
         if (item.isMiddle) {
@@ -1182,7 +1171,7 @@ function AnimationPage({
       }
       setPlayPosPoint(letPlayPosPoint)
       // Ball
-      let letPlayPosBall = new Array()
+      let letPlayPosBall = new Array([])
       for (let index = 0; index < eachFrameBall.length; index++) {
         let item = eachFrameBall[index]
         if (item.isMiddle) {
@@ -1367,11 +1356,11 @@ function AnimationPage({
                       let xm2 = item.middleX2 * imgWidth
                       let ym2 = item.middleY2 * imgWidth
                       if (dragCircleItem === index || (dragCircleItem === -1 && index === eachFrameCircle?.length - 1)) {
-                        if (isMiddlePicked == 1) {
+                        if (isMiddlePicked === 1) {
                           xm1 = mousePosX
                           ym1 = mousePosY
                         }
-                        else if (isMiddlePicked == 2) {
+                        else if (isMiddlePicked === 2) {
                           xm2 = mousePosX
                           ym2 = mousePosY
                         }
@@ -1422,11 +1411,11 @@ function AnimationPage({
                       let xm2 = item.middleX2 * imgWidth
                       let ym2 = item.middleY2 * imgWidth
                       if (dragPointItem === index || (dragPointItem === -1 && index === eachFramePoint?.length - 1)) {
-                        if (isMiddlePicked == 1) {
+                        if (isMiddlePicked === 1) {
                           xm1 = mousePosX
                           ym1 = mousePosY
                         }
-                        else if (isMiddlePicked == 2) {
+                        else if (isMiddlePicked === 2) {
                           xm2 = mousePosX
                           ym2 = mousePosY
                         }
@@ -1477,11 +1466,11 @@ function AnimationPage({
                       let xm2 = item.middleX2 * imgWidth
                       let ym2 = item.middleY2 * imgWidth
                       if (dragBallItem === index || (dragBallItem === -1 && index === eachFrameBall?.length - 1)) {
-                        if (isMiddlePicked == 1) {
+                        if (isMiddlePicked === 1) {
                           xm1 = mousePosX
                           ym1 = mousePosY
                         }
-                        else if (isMiddlePicked == 2) {
+                        else if (isMiddlePicked === 2) {
                           xm2 = mousePosX
                           ym2 = mousePosY
                         }
@@ -1522,7 +1511,7 @@ function AnimationPage({
               {
                 eachFrameCircle?.map((item, index) => {
                   if (!isPlay) {
-                    var contextFlag = false
+                    
                     if (item.isMiddle) {
                       let lastIndex = canMiddleCircle(item.id)
                       let oldOne = newCircles[currentFrame - 1][lastIndex]
@@ -1539,7 +1528,6 @@ function AnimationPage({
               {
                 eachFramePoint?.map((item, index) => {
                   if (!isPlay) {
-                    var contextFlag = false
                     if (item.isMiddle) {
                       let lastIndex = canMiddlePoint(item.id)
                       let oldOne = newPoints[currentFrame - 1][lastIndex]
@@ -1556,7 +1544,6 @@ function AnimationPage({
               {
                 eachFrameBall?.map((item, index) => {
                   if (!isPlay) {
-                    var contextFlag = false
                     if (item.isMiddle) {
                       let lastIndex = canMiddleBall(item.id)
                       let oldOne = newBalls[currentFrame - 1][lastIndex]
