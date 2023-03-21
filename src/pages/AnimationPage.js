@@ -537,7 +537,7 @@ function AnimationPage({
                 letplayPosCircle.push([item.mousePosX, item.mousePosY]);
               }
             }
-            console.log(letplayPosCircle)
+            console.log(letplayPosCircle);
             setCurrentFrame(nextFrame);
             setEachFrameCircle(newCircles[nextFrame]);
             setPlayPosCircle(letplayPosCircle);
@@ -590,7 +590,7 @@ function AnimationPage({
           letPlayPosCircle.push([item.mousePosX, item.mousePosY]);
         }
       }
-      console.log(letPlayPosCircle)
+      console.log(letPlayPosCircle);
       setPlayPosCircle(letPlayPosCircle);
     }
   };
@@ -1347,9 +1347,12 @@ function AnimationPage({
                 className="button"
                 onClick={() => {
                   setNewCircles([]);
-                  setNewPoints([]);
-                  setNewBalls([]);
+                  setEachFrameCircle([]);
                   setDrawables([]);
+                  setFrame(0);
+                  setCurrentFrame(0);
+                  setCircleId(0);
+                  setCurrentNumbers([1, 1, 1, 1, 1, 1, 1, 1]);
                 }}
               >
                 <TrashIcon />
@@ -1446,10 +1449,10 @@ function AnimationPage({
               sx={{ mt: 2 }}
               style={{ margin: 0 }}
             >
-              http://localhost:3000/animation/{saveKey}
+              {window.location.hostname + "/animation/" + saveKey}
             </Typography>
             <CopyToClipboard
-              text={"http://localhost:3000/animation/" + saveKey}
+              text={window.location.hostname + "/animation/" + saveKey}
             >
               <div className="copyBtn">
                 <CopyIcon />
