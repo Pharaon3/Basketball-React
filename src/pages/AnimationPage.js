@@ -483,7 +483,7 @@ function AnimationPage({
     let letframe = frame;
     if (letframe === 0) return;
     // Circle
-    let nextNewCircles = new Array([]);
+    let nextNewCircles = new Array();
     for (let i = 0; i < letframe; i++) {
       nextNewCircles.push(newCircles[i]);
     }
@@ -603,7 +603,7 @@ function AnimationPage({
       setCount(0);
       setCurrentFrame(1);
       // Circle
-      let letPlayPosCircle = new Array([]);
+      let letPlayPosCircle = new Array();
       for (let index = 0; index < eachFrameCircle.length; index++) {
         let item = eachFrameCircle[index];
         if (item.isMiddle) {
