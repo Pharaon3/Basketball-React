@@ -16,6 +16,12 @@ const reducer = (state = initState, action) => {
                 }
             }
         }
+        case 'SET_COUNT': {
+            return {
+                ...state,
+                count: action.count
+            }
+        }
         default: return state
     }
 

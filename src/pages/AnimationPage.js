@@ -37,7 +37,8 @@ import { ReactComponent as RotateIcon } from "../assets/svg/rotate-ccw.svg";
 import { ReactComponent as UserIcon } from "../assets/svg/user.svg";
 
 import { ReactComponent as PencilIcon } from "../assets/svg/pencil.svg";
-import { ReactComponent as ArrowIcon } from "../assets/svg/mouse-pointer.svg";
+import { ReactComponent as ArrowIcon } from "../assets/svg/arrows.svg";
+import { ReactComponent as CursorIcon } from "../assets/svg/mouse-pointer.svg";
 import { ReactComponent as PointerIcon } from "../assets/svg/x.svg";
 import { ReactComponent as CircleIcon } from "../assets/svg/circle.svg";
 import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
@@ -55,6 +56,9 @@ import SceneWithDrawables from "../components/SceneWithDrawables";
 import { collection, getDocs, addDoc } from "firebase/firestore";
 import { firestore } from "../firebase_setup/firebase";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { addDish, removeDish, setCountRedux } from "../action";
+import { useSelector, useDispatch } from "react-redux";
+import Tooltip from "@mui/material/Tooltip";
 var onceFlag = true;
 
 const style = {
@@ -91,6 +95,7 @@ function AnimationPage({
   setNewPoints,
   setNewBalls,
 }) {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [dragCircleItem, setDragCircleItem] = useState(-2);
   const [dropMenuItem, setDropMenuItem] = useState(-1);
@@ -120,17 +125,17 @@ function AnimationPage({
   const [circleId, setCircleId] = useState(0);
   const [isPause, setIsPause] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
-  const [count, setCount] = useState(0);
+  // const [count, setCount] = useState(0);
   const [playPosCircle, setPlayPosCircle] = useState([]);
   const [saveKey, setSaveKey] = useState();
   const [open, setOpen] = React.useState(false);
   const modalOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [positionDiff, setPositionDiff] = useState(false);
-  const segments = 80;
-
+  const segments = 200;
   const params = useParams();
   const key = params.key;
+  const count = useSelector((state) => state.count);
 
   const fetchPost = async () => {
     await getDocs(collection(firestore, "state")).then((querySnapshot) => {
@@ -550,16 +555,17 @@ function AnimationPage({
             setIsPlayAll(false);
           }
         }
-        setCount((count) => (count > segments - 1 ? 0 : count + 1));
+        dispatch(setCountRedux(count > segments - 1 ? 0 : count + 1));
+        // setCount((count) => (count > segments - 1 ? 0 : count + 1));
       }
-    }, 250);
+    }, 20);
   });
   const play = () => {
     if (isPause) {
       setIsPause(false);
     } else {
       setIsPlay(true);
-      setCount(0);
+      dispatch(setCountRedux(0));
       // Circle
       let letPlayPosCircle = new Array();
       for (let index = 0; index < eachFrameCircle.length; index++) {
@@ -600,14 +606,16 @@ function AnimationPage({
     } else {
       setIsPlay(true);
       setIsPlayAll(true);
-      setCount(0);
+      dispatch(setCountRedux(0));
       setCurrentFrame(1);
+      setEachFrameCircle(newCircles[1]);
       // Circle
       let letPlayPosCircle = new Array();
-      for (let index = 0; index < eachFrameCircle.length; index++) {
-        let item = eachFrameCircle[index];
+      let firstFrameCircle = newCircles[1];
+      for (let index = 0; index < firstFrameCircle.length; index++) {
+        let item = firstFrameCircle[index];
         if (item.isMiddle) {
-          let oldOne = newCircles[currentFrame - 1][index];
+          let oldOne = newCircles[0][index];
           let x1 = (oldOne["mousePosX"] * imgWidth) / oldOne["imgWidth"];
           let x2 = (item["mousePosX"] * imgWidth) / item["imgWidth"];
           let y1 = (oldOne["mousePosY"] * imgWidth) / oldOne["imgWidth"];
@@ -680,16 +688,22 @@ function AnimationPage({
           <div className="button-line">
             <div className="button-group">
               <div className="button" onClick={() => navigate("/main")}>
-                <ArrowLeftIcon />
+                <Tooltip title="Back">
+                  <ArrowLeftIcon />
+                </Tooltip>
               </div>
               <div
                 className="button"
                 onClick={() => setRosterShowFlag(!rosterShowFlag)}
               >
-                <MenuIcon />
+                <Tooltip title="Menu">
+                  <MenuIcon />
+                </Tooltip>
               </div>
               <div className="button" onClick={saveState}>
-                <LinkIcon />
+                <Tooltip title="Get link">
+                  <LinkIcon />
+                </Tooltip>
               </div>
               <div
                 className="button"
@@ -701,7 +715,9 @@ function AnimationPage({
                   )
                 }
               >
-                <DownloadIcon />
+                <Tooltip title="Download">
+                  <DownloadIcon />
+                </Tooltip>
               </div>
               <div
                 className={fieldLineFlag ? "button" : "button clicked"}
@@ -709,7 +725,9 @@ function AnimationPage({
                   setFieldLineFlag(!fieldLineFlag);
                 }}
               >
-                <FieldIcon />
+                <Tooltip title="Show field">
+                  <FieldIcon />
+                </Tooltip>
               </div>
               <div
                 className={!fullScreenFlag ? "button" : "button clicked"}
@@ -719,7 +737,15 @@ function AnimationPage({
                   setFullScreenFlag(!fullScreenFlag);
                 }}
               >
-                {!fullScreenFlag ? <MaximizeIcon /> : <MinimizeIcon />}
+                {!fullScreenFlag ? (
+                  <Tooltip title="Full screen">
+                    <MaximizeIcon />
+                  </Tooltip>
+                ) : (
+                  <Tooltip title="Exit full screen">
+                    <MinimizeIcon />
+                  </Tooltip>
+                )}
               </div>
               <div style={{ width: 20 }} />
               {rows}
@@ -727,12 +753,16 @@ function AnimationPage({
                 // curvLine
               }
               <div className="filmButton" onClick={makeNewFrame}>
-                <FilmIcon />
+                <Tooltip title="New frame">
+                  <FilmIcon />
+                </Tooltip>
                 {/* <PlusIcon /> */}
                 <div>+</div>
               </div>
               <div className="button" onClick={removeFrame}>
-                <BackArrowIcon />
+                <Tooltip title="Remove one frame">
+                  <BackArrowIcon />
+                </Tooltip>
               </div>
             </div>
             <div className="button-group">
@@ -741,38 +771,54 @@ function AnimationPage({
                   className={isPlay && !isPlayAll ? "button clicked" : "button"}
                   onClick={play}
                 >
-                  <PlayIcon />
+                  <Tooltip title="Play this frame">
+                    <PlayIcon />
+                  </Tooltip>
                 </div>
                 <div
                   className={isPlayAll ? "button clicked" : "button"}
                   onClick={playAll}
                 >
-                  <PlayCircleIcon />
+                  <Tooltip title="Play all frame">
+                    <PlayCircleIcon />
+                  </Tooltip>
                 </div>
                 <div
                   className={!isPause ? "button" : "button clicked"}
                   onClick={pause}
                 >
-                  <PauseIcon />
+                  <Tooltip title="Pause">
+                    <PauseIcon />
+                  </Tooltip>
                 </div>
                 <div className="button" onClick={stop}>
-                  <SquareIcon />
+                  <Tooltip title="Stop">
+                    <SquareIcon />
+                  </Tooltip>
                 </div>
                 <div
                   className={!isRepeat ? "button" : "button clicked"}
                   onClick={repeat}
                 >
-                  <RepeatIcon />
+                  <Tooltip title="Repeat mode">
+                    <RepeatIcon />
+                  </Tooltip>
                 </div>
               </div>
               <div className="button">
-                <GlobeIcon />
+                <Tooltip title="Global">
+                  <GlobeIcon />
+                </Tooltip>
               </div>
               <div className="button">
-                <HelpCircleIcon />
+                <Tooltip title="Help">
+                  <HelpCircleIcon />
+                </Tooltip>
               </div>
               <div className="button">
-                <LogInIcon />
+                <Tooltip title="Log in">
+                  <LogInIcon />
+                </Tooltip>
               </div>
             </div>
           </div>
@@ -1244,7 +1290,7 @@ function AnimationPage({
               >
                 {
                   {
-                    0: <PointerIcon />,
+                    0: <CursorIcon />,
                     1: <PencilIcon />,
                     2: <ArrowIcon />,
                     3: <CircleIcon />,
@@ -1265,7 +1311,7 @@ function AnimationPage({
                     setDrawToolMenuFlag(false);
                   }}
                 >
-                  <PointerIcon />
+                  <CursorIcon />
                 </div>
                 <div
                   className="button"
@@ -1330,7 +1376,7 @@ function AnimationPage({
                 >
                   {
                     {
-                      0: <PointerIcon />,
+                      0: <CursorIcon />,
                       1: <PencilIcon />,
                       2: <ArrowIcon />,
                       3: <CircleIcon />,
@@ -1341,7 +1387,9 @@ function AnimationPage({
                 </div>
               </div>
               <div className="button">
-                <RotateIcon />
+                <Tooltip title="Rotate">
+                  <RotateIcon />
+                </Tooltip>
               </div>
               <div
                 className="button"
@@ -1355,7 +1403,9 @@ function AnimationPage({
                   setCurrentNumbers([1, 1, 1, 1, 1, 1, 1, 1]);
                 }}
               >
-                <TrashIcon />
+                <Tooltip title="Initialize">
+                  <TrashIcon />
+                </Tooltip>
               </div>
             </div>
           </div>

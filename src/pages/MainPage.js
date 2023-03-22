@@ -31,7 +31,8 @@ import { ReactComponent as RotateIcon } from "../assets/svg/rotate-ccw.svg";
 import { ReactComponent as UserIcon } from "../assets/svg/user.svg";
 
 import { ReactComponent as PencilIcon } from "../assets/svg/pencil.svg";
-import { ReactComponent as ArrowIcon } from "../assets/svg/mouse-pointer.svg";
+import { ReactComponent as ArrowIcon } from "../assets/svg/arrows.svg";
+import { ReactComponent as CursorIcon } from "../assets/svg/mouse-pointer.svg";
 import { ReactComponent as PointerIcon } from "../assets/svg/x.svg";
 import { ReactComponent as CircleIcon } from "../assets/svg/circle.svg";
 import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
@@ -533,7 +534,7 @@ function MainPage({
               <div className={"button"} onClick={() => setDrawToolMenuFlag(!drawToolMenuFlag)}>
                 {
                   {
-                    0: <PointerIcon />,
+                    0: <CursorIcon />,
                     1: <PencilIcon />,
                     2: <ArrowIcon />,
                     3: <CircleIcon />,
@@ -546,7 +547,7 @@ function MainPage({
                 <div className="button" onClick={() => { setDrawTool(0); setDrawToolMenuFlag(false) }}
                   onTouchEnd={() => { setDrawTool(0); setDrawToolMenuFlag(false) }}
                   >
-                  <PointerIcon />
+                  <CursorIcon />
                 </div>
                 <div className="button" onClick={() => { setDrawTool(1); setDrawToolMenuFlag(false) }}
                   onTouchEnd={() => { setDrawTool(1); setDrawToolMenuFlag(false) }}
@@ -576,7 +577,7 @@ function MainPage({
                 <div className="button" onClick={() => setDrawToolMenuFlag(false)}>
                   {
                     {
-                      0: <PointerIcon />,
+                      0: <CursorIcon />,
                       1: <PencilIcon />,
                       2: <ArrowIcon />,
                       3: <CircleIcon />,
