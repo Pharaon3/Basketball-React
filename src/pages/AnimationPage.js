@@ -144,7 +144,7 @@ function AnimationPage({
   //creating function to load ip address from the API
   const getData = async () => {
     const res = await axios.get("https://geolocation-db.com/json/");
-    console.log(res.data);
+    // console.log(res.data);
     setIP(res.data.IPv4);
   };
 
@@ -198,7 +198,7 @@ function AnimationPage({
       const docRef = await addDoc(collection(firestore, "state"), {
         state: myObject,
       });
-      console.log("Document written with ID: ", docRef.id);
+      // console.log("Document written with ID: ", docRef.id);
       setSaveKey(docRef.id);
       modalOpen();
     } catch (e) {
@@ -564,7 +564,6 @@ function AnimationPage({
                 letplayPosCircle.push([item.mousePosX, item.mousePosY]);
               }
             }
-            console.log(letplayPosCircle);
             setCurrentFrame(nextFrame);
             setEachFrameCircle(newCircles[nextFrame]);
             setPlayPosCircle(letplayPosCircle);
@@ -619,7 +618,6 @@ function AnimationPage({
           letPlayPosCircle.push([item.mousePosX, item.mousePosY]);
         }
       }
-      console.log(letPlayPosCircle);
       setPlayPosCircle(letPlayPosCircle);
     }
   };

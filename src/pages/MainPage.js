@@ -212,8 +212,6 @@ function MainPage({
       });
       if (itemType === "circle") setCurrentNumbers(nextCurrentNumbers);
     }
-    console.log("newCircle in itemPicked", newCircles);
-    console.log("eachFrameCircle in itemPicked", eachFrameCircle);
   };
   const itemReleased = () => {
     if (dragCircleItem === -2) return;
@@ -239,16 +237,10 @@ function MainPage({
     });
     setNewCircles(nextNewCircles);
     setDragCircleItem(-2);
-    console.log("eachFrameCircle", eachFrameCircle);
   };
   useEffect(() => {
-    // if(frame === 0){
-    //   setEachFrameCircle(newCircles)
-    // } else {
-    console.log("initial newCircles", newCircles);
     if (newCircles.length) setEachFrameCircle(newCircles[0]);
-    console.log("eachFrameCircle", eachFrameCircle);
-    // }
+    else setEachFrameCircle([]);
   }, []);
 
   return (
