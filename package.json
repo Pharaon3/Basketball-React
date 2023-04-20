@@ -2,7 +2,7 @@
   "name": "temp",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://creatuportada.em.uy/",
+  "homepage": "https://vcoachingboard.com/",
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
@@ -10,6 +10,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.3.4",
     "curve-interpolator": "^3.1.1",
     "firebase": "^9.18.0",
     "html2canvas": "^1.4.1",

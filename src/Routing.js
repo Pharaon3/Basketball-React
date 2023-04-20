@@ -21,6 +21,12 @@ function Routing({fullScreenHandle}) {
   const [positionCircleDiff, setPositionCircleDiff] = useState(18)
   const [positionPointDiff, setPositionPointDiff] = useState(10)
   const [positionBallDiff, setPositionBallDiff] = useState(15)
+  const [eachFrameCircle, setEachFrameCircle] = useState([]);
+  const [circleId, setCircleId] = useState(0);
+  const [frame, setFrame] = useState(0);
+  const [currentNumbers, setCurrentNumbers] = useState([
+    1, 1, 1, 1, 1, 1, 1, 1,
+  ]);
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
@@ -39,7 +45,11 @@ function Routing({fullScreenHandle}) {
               windowsWidth={windowsWidth} setWindowsWidth={setWindowsWidth}
               mousePosX={mousePosX} setMousePosX={setMousePosX}
               mousePosY={mousePosY} setMousePosY={setMousePosY}
+              frame={frame} setFrame={setFrame}
+              circleId={circleId} setCircleId={setCircleId}
+              currentNumbers={currentNumbers} setCurrentNumbers={setCurrentNumbers}
               newCircles={newCircles} setNewCircles={setNewCircles}
+              eachFrameCircle={eachFrameCircle} setEachFrameCircle={setEachFrameCircle}
               newPoints={newPoints} setNewPoints={setNewPoints}
               newBalls={newBalls} setNewBalls={setNewBalls}
               positionCircleDiff={positionCircleDiff} setPositionCircleDiff={setPositionCircleDiff}
@@ -64,6 +74,10 @@ function Routing({fullScreenHandle}) {
                 windowsWidth={windowsWidth} setWindowsWidth={setWindowsWidth}
                 mousePosX={mousePosX} setMousePosX={setMousePosX}
                 mousePosY={mousePosY} setMousePosY={setMousePosY}
+                frame={frame} setFrame={setFrame}
+                eachFrameCircle={eachFrameCircle} setEachFrameCircle={setEachFrameCircle}
+                circleId={circleId} setCircleId={setCircleId}
+                currentNumbers={currentNumbers} setCurrentNumbers={setCurrentNumbers}
                 newCircles={newCircles} setNewCircles={setNewCircles}
                 newPoints={newPoints} setNewPoints={setNewPoints}
                 newBalls={newBalls} setNewBalls={setNewBalls}
@@ -88,6 +102,10 @@ function Routing({fullScreenHandle}) {
                 windowsWidth={windowsWidth} setWindowsWidth={setWindowsWidth}
                 mousePosX={mousePosX} setMousePosX={setMousePosX}
                 mousePosY={mousePosY} setMousePosY={setMousePosY}
+                frame={frame} setFrame={setFrame}
+                eachFrameCircle={eachFrameCircle} setEachFrameCircle={setEachFrameCircle}
+                circleId={circleId} setCircleId={setCircleId}
+                currentNumbers={currentNumbers} setCurrentNumbers={setCurrentNumbers}
                 newCircles={newCircles} setNewCircles={setNewCircles}
                 newPoints={newPoints} setNewPoints={setNewPoints}
                 newBalls={newBalls} setNewBalls={setNewBalls}

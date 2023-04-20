@@ -60,18 +60,20 @@ function MainPage({
   setMousePosX,
   mousePosY,
   setMousePosY,
+  frame,
+  setFrame,
+  eachFrameCircle,
+  setEachFrameCircle,
+  circleId,
+  setCircleId,
+  currentNumbers,
+  setCurrentNumbers,
   newCircles,
   setNewCircles,
   newPoints,
   setNewPoints,
   newBalls,
   setNewBalls,
-  positionCircleDiff,
-  setPositionCircleDiff,
-  positionPointDiff,
-  setPositionPointDiff,
-  positionBallDiff,
-  setPositionBallDiff,
 }) {
   const navigate = useNavigate();
   const [dragCircleItem, setDragCircleItem] = useState(-2);
@@ -79,9 +81,7 @@ function MainPage({
   const [dragBallItem, setDragBallItem] = useState(-2);
   const [dropMenuItem, setDropMenuItem] = useState(-1);
   const [rosterShowFlag, setRosterShowFlag] = useState(false);
-  const [currentNumbers, setCurrentNumbers] = useState([
-    1, 1, 1, 1, 1, 1, 1, 1,
-  ]);
+  const [positionDiff, setPositionDiff] = useState({circle: 18, point: 10, ball: 12.5});
   const colorArray = [
     "red",
     "blue",
@@ -116,17 +116,11 @@ function MainPage({
           ?.height
       );
       if (tempInnerWidth > 1170) {
-        setPositionCircleDiff(18);
-        setPositionPointDiff(10);
-        setPositionBallDiff(15);
+        setPositionDiff({ circle: 18, point: 10, ball: 12.5 });
       } else if (tempInnerWidth > 480) {
-        setPositionCircleDiff(13);
-        setPositionPointDiff(7);
-        setPositionBallDiff(10);
+        setPositionDiff({ circle: 13, point: 7, ball: 10 });
       } else {
-        setPositionCircleDiff(9);
-        setPositionPointDiff(6);
-        setPositionBallDiff(8);
+        setPositionDiff({ circle: 9, point: 6, ball: 8 });
       }
       return () => clearInterval(interval);
     }, 50);
@@ -135,9 +129,7 @@ function MainPage({
     setWindowsWidth,
     setImgWidth,
     setImgHeight,
-    setPositionCircleDiff,
-    setPositionPointDiff,
-    setPositionBallDiff,
+    setPositionDiff,
   ]);
   const exportAsImage = async (element, imageFileName, downloadFlag) => {
     const canvas = await html2canvas(element);
@@ -176,33 +168,58 @@ function MainPage({
     setMousePosY(y + 1);
   };
   /////////////////////////////////////////////////////////////////////////////////
-  const circlePicked = (creatingFlag, index, color) => {
+  const itemPicked = (itemType, creatingFlag, index, color) => {
     if (dropMenuItem > -1) return;
     setDragCircleItem(index);
     setDropMenuItem(-1);
+    let newEachFrameCircle = eachFrameCircle;
     if (creatingFlag) {
       var tempCurrentId = colorArray.indexOf(color);
       const newObject = {
+        id: circleId,
+        type: itemType,
         color: color,
         number: currentNumbers[tempCurrentId],
         name: "",
         mousePosX: mousePosX,
         mousePosY: mousePosY,
         imgWidth: imgWidth,
+        middleX1: 0,
+        middleY1: 0,
+        middleX2: 0,
+        middleY2: 0,
+        isMiddle: false,
       };
-      newCircles.push(newObject);
+      setCircleId(circleId + 1);
+      newEachFrameCircle.push(newObject);
+      setEachFrameCircle(newEachFrameCircle);
+      const nextNewCircles = newCircles.map((item, index) => {
+        if (index === 0) {
+          return newEachFrameCircle;
+        } else if (index > 0) {
+          return [...item, newObject];
+        } else {
+          return item;
+        }
+      });
+      setNewCircles(nextNewCircles);
+      if (nextNewCircles.length === 0) {
+        setNewCircles(newEachFrameCircle);
+      }
       const nextCurrentNumbers = currentNumbers.map((item, index) => {
         if (index !== tempCurrentId) return item;
         else return item + 1;
       });
-      setCurrentNumbers(nextCurrentNumbers);
+      if (itemType === "circle") setCurrentNumbers(nextCurrentNumbers);
     }
+    console.log("newCircle in itemPicked", newCircles);
+    console.log("eachFrameCircle in itemPicked", eachFrameCircle);
   };
-  const circleReleased = () => {
+  const itemReleased = () => {
     if (dragCircleItem === -2) return;
     const releasingId =
-      dragCircleItem > -1 ? dragCircleItem : newCircles?.length - 1;
-    const nextNewCircles = newCircles?.map((item, index) => {
+      dragCircleItem > -1 ? dragCircleItem : eachFrameCircle?.length - 1;
+    const nexteachFrameCircle = eachFrameCircle?.map((item, index) => {
       if (index === releasingId) {
         return {
           ...item,
@@ -211,143 +228,31 @@ function MainPage({
           imgWidth: imgWidth,
         };
       } else return item;
+    });
+    setEachFrameCircle(nexteachFrameCircle);
+    const nextNewCircles = newCircles.map((item, index) => {
+      if (index === 0) {
+        return nexteachFrameCircle;
+      } else {
+        return item;
+      }
     });
     setNewCircles(nextNewCircles);
     setDragCircleItem(-2);
-    console.log(newCircles);
+    console.log("eachFrameCircle", eachFrameCircle);
   };
-  const pointPicked = (creatingFlag, index, color) => {
-    setDragPointItem(index);
-    if (creatingFlag) {
-      const newObject = {
-        color: color,
-        mousePosX: mousePosX,
-        mousePosY: mousePosY,
-        imgWidth: imgWidth,
-      };
-      newPoints.push(newObject);
-    }
-  };
-  const pointReleased = () => {
-    if (dragPointItem === -2) return;
-    const releasingId =
-      dragPointItem > -1 ? dragPointItem : newPoints?.length - 1;
-    const nextNewPoints = newPoints?.map((item, index) => {
-      if (index === releasingId) {
-        return {
-          ...item,
-          mousePosX: mousePosX,
-          mousePosY: mousePosY,
-          imgWidth: imgWidth,
-        };
-      } else return item;
-    });
-    setNewPoints(nextNewPoints);
-    setDragPointItem(-2);
-  };
-  const ballPicked = (creatingFlag, index) => {
-    setDragBallItem(index);
-    if (creatingFlag) {
-      const newObject = {
-        mousePosX: mousePosX,
-        mousePosY: mousePosY,
-        imgWidth: imgWidth,
-      };
-      newBalls.push(newObject);
-    }
-  };
-  const ballReleased = () => {
-    if (dragBallItem === -2) return;
-    const releasingId = dragBallItem > -1 ? dragBallItem : newBalls?.length - 1;
-    const nextNewBalls = newBalls?.map((item, index) => {
-      if (index === releasingId) {
-        return {
-          ...item,
-          mousePosX: mousePosX,
-          mousePosY: mousePosY,
-          imgWidth: imgWidth,
-        };
-      } else return item;
-    });
-    setNewBalls(nextNewBalls);
-    setDragBallItem(-2);
-  };
-
-  //////////drawPenciling lines/////////////////////////////////////////
-  // const canvasRef = useRef(null);
-  // const ctxRef = useRef(null);
-  // const [isdrawPenciling, setIsdrawPenciling] = useState(false);
-  // // const [lineWidth, setLineWidth] = useState(5);
-  // // const [lineColor, setLineColor] = useState("blue");
-
-  // const startPencildrawPenciling = (e) => {
-  //   console.log(e)
-  //   if(drawTool!==1) return
-  //   ctxRef.current.beginPath();
-  //   ctxRef.current.moveTo(
-  //     e.nativeEvent.offsetX,
-  //     e.nativeEvent.offsetY
-  //   );
-  //   setIsdrawPenciling(true);
-  // };
-  // const startPencildrawPencilingByTouch = (e) => {
-  //   console.log(e)
-  //   if(drawTool!==1) return
-  //   ctxRef.current.beginPath();
-  //   var rect = e.target.getBoundingClientRect();
-  //   var x = e.targetTouches[0].pageX - rect.left;
-  //   var y = e.targetTouches[0].pageY - rect.top;
-  //   ctxRef.current.moveTo(x,y);
-  //   setIsdrawPenciling(true);
-  // };
-
-  // // Function for ending the drawPenciling
-  // const endPencildrawPenciling = () => {
-  //   if(drawTool!==1) return
-  //   ctxRef.current.closePath();
-  //   setIsdrawPenciling(false);
-  // };
-
-  // const drawPencil = (e) => {
-  //   if(drawTool!==1) return
-  //   if (!isdrawPenciling) {
-  //     return;
-  //   }
-  //   ctxRef.current.lineTo(
-  //     e.nativeEvent.offsetX,
-  //     e.nativeEvent.offsetY
-  //   );
-
-  //   ctxRef.current.stroke();
-  // };
-  // const drawPencilByTouch = (e) => {
-  //   if(drawTool!==1) return
-  //   if (!isdrawPenciling) {
-  //     return;
-  //   }
-  //   var rect = e.target.getBoundingClientRect();
-  //   var x = e.targetTouches[0].pageX - rect.left;
-  //   var y = e.targetTouches[0].pageY - rect.top;
-  //   ctxRef.current.lineTo(x,y);
-
-  //   ctxRef.current.stroke();
-  // };
-  // useEffect(() => {
-  //   const canvas = canvasRef.current;
-  //   const ctx = canvas.getContext("2d");
-  //   ctx.lineCap = "round";
-  //   ctx.lineJoin = "round";
-  //   // ctx.strokeStyle = lineColor;
-  //   // ctx.lineWidth = lineWidth;
-  //   ctx.strokeStyle = "blue";
-  //   ctx.lineWidth = 3;
-  //   ctxRef.current = ctx;
-  // // }, [lineColor, lineWidth]);
-  // });
-  /////////////////////////////////////////////////////////////////////////
+  useEffect(() => {
+    // if(frame === 0){
+    //   setEachFrameCircle(newCircles)
+    // } else {
+    console.log("initial newCircles", newCircles);
+    if (newCircles.length) setEachFrameCircle(newCircles[0]);
+    console.log("eachFrameCircle", eachFrameCircle);
+    // }
+  }, []);
 
   return (
-    <div className="MainPage">
+    <div id="main" className="MainPage">
       <div className="main">
         <div
           className="board"
@@ -355,21 +260,15 @@ function MainPage({
             if (rosterShowFlag) setRosterShowFlag(false);
           }}
           onMouseUp={() => {
-            circleReleased();
-            pointReleased();
-            ballReleased();
+            itemReleased();
             setDrawToolMenuFlag(false);
           }}
           onTouchEnd={() => {
-            circleReleased();
-            pointReleased();
-            ballReleased();
+            itemReleased();
             setDrawToolMenuFlag(false);
           }}
           onMouseLeave={() => {
-            circleReleased();
-            pointReleased();
-            ballReleased();
+            itemReleased();
           }}
           onMouseMove={(e) => setPositionByMouse(e)}
           onTouchMove={(e) => setPositionByTouch(e)}
@@ -468,41 +367,41 @@ function MainPage({
               id="new-circles"
               style={drawTool !== 0 ? { pointerEvents: "none" } : {}}
             >
-              {newCircles?.map((item, index) => {
+              {eachFrameCircle?.map((item, index) => {
                 const defaultStyle = {
                   top: `${
                     item?.mousePosY * (imgWidth / item?.imgWidth) -
-                    positionCircleDiff
+                    positionDiff[item.type]
                   }px`,
                   left: `${
                     item?.mousePosX * (imgWidth / item?.imgWidth) -
-                    positionCircleDiff
+                    positionDiff[item.type]
                   }px`,
                 };
                 const dragStyle = {
-                  top: `${mousePosY - positionCircleDiff}px`,
-                  left: `${mousePosX - positionCircleDiff}px`,
+                  top: `${mousePosY - positionDiff[item.type]}px`,
+                  left: `${mousePosX - positionDiff[item.type]}px`,
                 };
                 var contextFlag = false;
                 return (
                   <div
-                    className={"circle " + item?.color}
-                    key={"new-circle-" + index}
+                    className={item?.type + " " + item?.color}
+                    key={"new-" + item.type + "-" + index}
                     style={
                       dragCircleItem === index ||
                       (dragCircleItem === -1 &&
-                        index === newCircles?.length - 1)
+                        index === eachFrameCircle?.length - 1)
                         ? dragStyle
                         : defaultStyle
                     }
                     // style={defaultStyle}
                     onMouseDown={(e) => {
                       if (e.button === 2) return;
-                      circlePicked(false, index, "");
+                      itemPicked(item.type, false, index, "");
                     }}
                     onTouchStart={() => {
                       if (contextFlag) return;
-                      circlePicked(false, index, "");
+                      itemPicked(item.type, false, index, "");
                     }}
                     onContextMenu={(e) => {
                       contextFlag = true;
@@ -516,175 +415,78 @@ function MainPage({
                       contextFlag = false;
                     }}
                   >
-                    {item?.number}
-                    <div
-                      className={
-                        dropMenuItem === index ? "drop-menu" : "hidden"
-                      }
-                    >
-                      <p>
-                        Number{" "}
-                        <input
-                          min={1}
-                          type="number"
-                          value={item?.number}
-                          onChange={(e) => {
-                            const nextNewCircles = newCircles?.map(
-                              (itemM, indexX) => {
-                                if (indexX === index) {
-                                  return {
-                                    ...itemM,
-                                    number: e.target.value,
-                                  };
-                                } else return itemM;
-                              }
-                            );
-                            setNewCircles(nextNewCircles);
-                          }}
-                        />
-                      </p>
-                      <p>
-                        Name{" "}
-                        <input
-                          value={item?.name}
-                          onChange={(e) => {
-                            const nextNewCircles = newCircles?.map(
-                              (itemM, indexX) => {
-                                if (indexX === index) {
-                                  return {
-                                    ...itemM,
-                                    name: e.target.value,
-                                  };
-                                } else return itemM;
-                              }
-                            );
-                            setNewCircles(nextNewCircles);
-                          }}
-                        />
-                      </p>
-                      <div
-                        className="delete-button"
-                        onClick={() => {
-                          setDropMenuItem(-1);
-                          setNewCircles([
-                            ...newCircles?.slice(0, index),
-                            ...newCircles?.slice(index + 1),
-                          ]);
-                        }}
-                        onTouchStart={() => {
-                          setDropMenuItem(-1);
-                          setNewCircles([
-                            ...newCircles?.slice(0, index),
-                            ...newCircles?.slice(index + 1),
-                          ]);
-                        }}
-                      >
-                        Delete
-                      </div>
-                    </div>
-                    <div className="name">{item?.name}</div>
-                  </div>
-                );
-              })}
-              {newPoints?.map((item, index) => {
-                const defaultStyle = {
-                  top: `${
-                    item?.mousePosY * (imgWidth / item?.imgWidth) -
-                    positionPointDiff
-                  }px`,
-                  left: `${
-                    item?.mousePosX * (imgWidth / item?.imgWidth) -
-                    positionPointDiff
-                  }px`,
-                };
-                const dragStyle = {
-                  top: `${mousePosY - positionPointDiff}px`,
-                  left: `${mousePosX - positionPointDiff}px`,
-                };
-                var contextFlag = false;
-                return (
-                  <div
-                    className={"point " + item?.color}
-                    key={"new-point-" + index}
-                    style={
-                      dragPointItem === index ||
-                      (dragPointItem === -1 && index === newPoints?.length - 1)
-                        ? dragStyle
-                        : defaultStyle
-                    }
-                    // style={defaultStyle}
-                    onMouseDown={(e) => {
-                      if (e.button === 2) return;
-                      pointPicked(false, index, "");
-                    }}
-                    onTouchStart={() => {
-                      if (contextFlag) return;
-                      pointPicked(false, index, "");
-                    }}
-                    onContextMenu={(e) => {
-                      contextFlag = true;
-                      e.preventDefault();
-                      //Delete...................................................................
-                      setNewPoints([
-                        ...newPoints?.slice(0, index),
-                        ...newPoints?.slice(index + 1),
-                      ]);
-                    }}
-                    onTouchEnd={() => {
-                      contextFlag = false;
-                    }}
-                  ></div>
-                );
-              })}
-              {newBalls?.map((item, index) => {
-                const defaultStyle = {
-                  top: `${
-                    item?.mousePosY * (imgWidth / item?.imgWidth) -
-                    positionBallDiff
-                  }px`,
-                  left: `${
-                    item?.mousePosX * (imgWidth / item?.imgWidth) -
-                    positionBallDiff
-                  }px`,
-                };
-                const dragStyle = {
-                  top: `${mousePosY - positionBallDiff}px`,
-                  left: `${mousePosX - positionBallDiff}px`,
-                };
-                var contextFlag = false;
-                return (
-                  <div
-                    className="ball"
-                    key={"new-ball-" + index}
-                    style={
-                      dragBallItem === index ||
-                      (dragBallItem === -1 && index === newBalls?.length - 1)
-                        ? dragStyle
-                        : defaultStyle
-                    }
-                    // style={defaultStyle}
-                    onMouseDown={(e) => {
-                      if (e.button === 2) return;
-                      ballPicked(false, index);
-                    }}
-                    onTouchStart={() => {
-                      if (contextFlag) return;
-                      ballPicked(false, index);
-                    }}
-                    onContextMenu={(e) => {
-                      contextFlag = true;
-                      e.preventDefault();
-                      //Delete...................................................................
-                      setNewBalls([
-                        ...newBalls?.slice(0, index),
-                        ...newBalls?.slice(index + 1),
-                      ]);
-                    }}
-                    onTouchEnd={() => {
-                      contextFlag = false;
-                    }}
-                  >
-                    <BallIcon />
+                    {item.type === "circle" ? (
+                      <>
+                        {item?.number}
+                        <div
+                          className={
+                            dropMenuItem === index ? "drop-menu" : "hidden"
+                          }
+                        >
+                          <p>
+                            Number{" "}
+                            <input
+                              min={1}
+                              type="number"
+                              value={item?.number}
+                              onChange={(e) => {
+                                const nexteachFrameCircle =
+                                  eachFrameCircle?.map((itemM, indexX) => {
+                                    if (indexX === index) {
+                                      return {
+                                        ...itemM,
+                                        number: e.target.value,
+                                      };
+                                    } else return itemM;
+                                  });
+                                setEachFrameCircle(nexteachFrameCircle);
+                              }}
+                            />
+                          </p>
+                          <p>
+                            Name{" "}
+                            <input
+                              value={item?.name}
+                              onChange={(e) => {
+                                const nexteachFrameCircle =
+                                  eachFrameCircle?.map((itemM, indexX) => {
+                                    if (indexX === index) {
+                                      return {
+                                        ...itemM,
+                                        name: e.target.value,
+                                      };
+                                    } else return itemM;
+                                  });
+                                setEachFrameCircle(nexteachFrameCircle);
+                              }}
+                            />
+                          </p>
+                          <div
+                            className="delete-button"
+                            onClick={() => {
+                              setDropMenuItem(-1);
+                              setEachFrameCircle([
+                                ...eachFrameCircle?.slice(0, index),
+                                ...eachFrameCircle?.slice(index + 1),
+                              ]);
+                            }}
+                            onTouchStart={() => {
+                              setDropMenuItem(-1);
+                              setEachFrameCircle([
+                                ...eachFrameCircle?.slice(0, index),
+                                ...eachFrameCircle?.slice(index + 1),
+                              ]);
+                            }}
+                          >
+                            Delete
+                          </div>
+                        </div>
+                        <div className="name">{item?.name}</div>{" "}
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                    {item.type === "ball" ? <BallIcon /> : ""}
                   </div>
                 );
               })}
@@ -703,85 +505,91 @@ function MainPage({
             <div className="circles">
               <div
                 className="circle red"
-                onMouseDown={() => circlePicked(true, -1, "red")}
-                onTouchStart={() => circlePicked(true, -1, "red")}
+                onMouseDown={() => itemPicked("circle", true, -1, "red")}
+                onTouchStart={() => itemPicked("circle", true, -1, "red")}
               >
                 {currentNumbers[0]}
               </div>
               <div
                 className="circle blue"
-                onMouseDown={() => circlePicked(true, -1, "blue")}
-                onTouchStart={() => circlePicked(true, -1, "blue")}
+                onMouseDown={() => itemPicked("circle", true, -1, "blue")}
+                onTouchStart={() => itemPicked("circle", true, -1, "blue")}
               >
                 {currentNumbers[1]}
               </div>
               <div
                 className="circle brown"
-                onMouseDown={() => circlePicked(true, -1, "brown")}
-                onTouchStart={() => circlePicked(true, -1, "brown")}
+                onMouseDown={() => itemPicked("circle", true, -1, "brown")}
+                onTouchStart={() => itemPicked("circle", true, -1, "brown")}
               >
                 {currentNumbers[2]}
               </div>
               <div
                 className="circle yellow"
-                onMouseDown={() => circlePicked(true, -1, "yellow")}
-                onTouchStart={() => circlePicked(true, -1, "yellow")}
+                onMouseDown={() => itemPicked("circle", true, -1, "yellow")}
+                onTouchStart={() => itemPicked("circle", true, -1, "yellow")}
               >
                 {currentNumbers[3]}
               </div>
               <div
                 className="circle green"
-                onMouseDown={() => circlePicked(true, -1, "green")}
-                onTouchStart={() => circlePicked(true, -1, "green")}
+                onMouseDown={() => itemPicked("circle", true, -1, "green")}
+                onTouchStart={() => itemPicked("circle", true, -1, "green")}
               >
                 {currentNumbers[4]}
               </div>
               <div
                 className="circle white"
-                onMouseDown={() => circlePicked(true, -1, "white")}
-                onTouchStart={() => circlePicked(true, -1, "white")}
+                onMouseDown={() => itemPicked("circle", true, -1, "white")}
+                onTouchStart={() => itemPicked("circle", true, -1, "white")}
               >
                 {currentNumbers[5]}
               </div>
               <div
                 className="circle grey"
-                onMouseDown={() => circlePicked(true, -1, "grey")}
-                onTouchStart={() => circlePicked(true, -1, "grey")}
+                onMouseDown={() => itemPicked("circle", true, -1, "grey")}
+                onTouchStart={() => itemPicked("circle", true, -1, "grey")}
               >
                 {currentNumbers[6]}
               </div>
               <div
                 className="circle black"
-                onMouseDown={() => circlePicked(true, -1, "black")}
-                onTouchStart={() => circlePicked(true, -1, "black")}
+                onMouseDown={() => itemPicked("circle", true, -1, "black")}
+                onTouchStart={() => itemPicked("circle", true, -1, "black")}
               >
                 {currentNumbers[7]}
               </div>
 
               <div
                 className="point purple"
-                onMouseDown={() => pointPicked(true, -1, "purple")}
-                onTouchStart={() => pointPicked(true, -1, "purple")}
+                onMouseDown={() => itemPicked("point", true, -1, "purple")}
+                onTouchStart={() => itemPicked("point", true, -1, "purple")}
               />
               <div
                 className="point orange"
-                onMouseDown={() => pointPicked(true, -1, "orange")}
-                onTouchStart={() => pointPicked(true, -1, "orange")}
+                onMouseDown={() => itemPicked("point", true, -1, "orange")}
+                onTouchStart={() => itemPicked("point", true, -1, "orange")}
               />
               <div
                 className="point springgreen"
-                onMouseDown={() => pointPicked(true, -1, "springgreen")}
-                onTouchStart={() => pointPicked(true, -1, "springgreen")}
+                onMouseDown={() => itemPicked("point", true, -1, "springgreen")}
+                onTouchStart={() =>
+                  itemPicked("point", true, -1, "springgreen")
+                }
               />
               <div
                 className="point cornflowerblue"
-                onMouseDown={() => pointPicked(true, -1, "cornflowerblue")}
-                onTouchStart={() => pointPicked(true, -1, "cornflowerblue")}
+                onMouseDown={() =>
+                  itemPicked("point", true, -1, "cornflowerblue")
+                }
+                onTouchStart={() =>
+                  itemPicked("point", true, -1, "cornflowerblue")
+                }
               />
               <div
                 className="ball"
-                onMouseDown={() => ballPicked(true, -1)}
-                onTouchStart={() => ballPicked(true, -1)}
+                onMouseDown={() => itemPicked("ball", true, -1)}
+                onTouchStart={() => itemPicked("ball", true, -1)}
               >
                 <BallIcon />
               </div>
@@ -897,7 +705,7 @@ function MainPage({
               <div
                 className="button"
                 onClick={() => {
-                  setNewCircles([]);
+                  setEachFrameCircle([]);
                   setNewPoints([]);
                   setNewBalls([]);
                   setDrawables([]);

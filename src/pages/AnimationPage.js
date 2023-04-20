@@ -59,6 +59,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { addDish, removeDish, setCountRedux } from "../action";
 import { useSelector, useDispatch } from "react-redux";
 import Tooltip from "@mui/material/Tooltip";
+import axios from "axios";
 var onceFlag = true;
 
 const style = {
@@ -92,17 +93,20 @@ function AnimationPage({
   setMousePosY,
   newCircles,
   setNewCircles,
-  setNewPoints,
-  setNewBalls,
+  frame,
+  setFrame,
+  eachFrameCircle,
+  setEachFrameCircle,
+  circleId,
+  setCircleId,
+  currentNumbers,
+  setCurrentNumbers,
 }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [dragCircleItem, setDragCircleItem] = useState(-2);
   const [dropMenuItem, setDropMenuItem] = useState(-1);
   const [rosterShowFlag, setRosterShowFlag] = useState(false);
-  const [currentNumbers, setCurrentNumbers] = useState([
-    1, 1, 1, 1, 1, 1, 1, 1,
-  ]);
   const colorArray = [
     "red",
     "blue",
@@ -116,13 +120,11 @@ function AnimationPage({
   const [drawToolMenuFlag, setDrawToolMenuFlag] = useState(false);
   const [drawTool, setDrawTool] = useState(0);
   const [drawables, setDrawables] = useState([]);
-  const [frame, setFrame] = useState(0);
   const [currentFrame, setCurrentFrame] = useState(0);
-  const [eachFrameCircle, setEachFrameCircle] = useState([]);
+
   const [isMiddlePicked, setIsMiddlePicked] = useState(0);
   const [isPlay, setIsPlay] = useState(false);
   const [isPlayAll, setIsPlayAll] = useState(false);
-  const [circleId, setCircleId] = useState(0);
   const [isPause, setIsPause] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
   // const [count, setCount] = useState(0);
@@ -131,12 +133,25 @@ function AnimationPage({
   const [open, setOpen] = React.useState(false);
   const modalOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [positionDiff, setPositionDiff] = useState(false);
+  const [positionDiff, setPositionDiff] = useState({circle: 18, point: 10, ball: 12.5});
   const segments = 200;
   const params = useParams();
   const key = params.key;
   const count = useSelector((state) => state.count);
+  //creating IP state
+  const [ip, setIP] = useState("");
 
+  //creating function to load ip address from the API
+  const getData = async () => {
+    const res = await axios.get("https://geolocation-db.com/json/");
+    console.log(res.data);
+    setIP(res.data.IPv4);
+  };
+
+  useEffect(() => {
+    //passing getData method to the lifecycle method
+    getData();
+  }, []);
   const fetchPost = async () => {
     await getDocs(collection(firestore, "state")).then((querySnapshot) => {
       const newData = querySnapshot.docs.map((doc) => {
@@ -171,7 +186,14 @@ function AnimationPage({
   const saveState = async (e) => {
     e.preventDefault();
     if (frame === 0) return;
-    var myObject = JSON.stringify([[circleId], currentNumbers, newCircles]);
+    var today = new Date();
+    var myObject = JSON.stringify([
+      [circleId],
+      currentNumbers,
+      newCircles,
+      ip,
+      today,
+    ]);
     try {
       const docRef = await addDoc(collection(firestore, "state"), {
         state: myObject,
@@ -358,8 +380,8 @@ function AnimationPage({
       let itemId;
       const newEachFrameCircle = eachFrameCircle?.map((item, index) => {
         if (index === releasingId) {
+          itemId = item.id;
           if (currentFrame > 0) {
-            itemId = item.id;
             let lastIndex = canMiddleCircle(item.id);
             if (lastIndex !== false) {
               let oldX =
@@ -404,7 +426,7 @@ function AnimationPage({
         if (index === currentFrame) {
           return newEachFrameCircle;
         } else if (index > currentFrame) {
-          let newEachFrameCircle1 = newCircles[index];
+          const newEachFrameCircle1 = newCircles[index];
           for (let i = 0; i < newEachFrameCircle1.length; i++) {
             if (
               newEachFrameCircle1[i].id === itemId &&
@@ -564,6 +586,7 @@ function AnimationPage({
     if (isPause) {
       setIsPause(false);
     } else {
+      if (isPlay) return;
       setIsPlay(true);
       dispatch(setCountRedux(0));
       // Circle
@@ -604,6 +627,8 @@ function AnimationPage({
     if (isPause) {
       setIsPause(false);
     } else {
+      if (isPlayAll) return;
+      if (isPlay) return;
       setIsPlay(true);
       setIsPlayAll(true);
       dispatch(setCountRedux(0));
@@ -663,7 +688,7 @@ function AnimationPage({
   };
 
   return (
-    <div className="MainPage">
+    <div id="animation" className="MainPage">
       <div className="main">
         <div
           className="board"
@@ -687,7 +712,14 @@ function AnimationPage({
         >
           <div className="button-line">
             <div className="button-group">
-              <div className="button" onClick={() => navigate("/main")}>
+              <div
+                className="button"
+                onClick={() => {
+                  setEachFrameCircle(newCircles[0]);
+                  setCurrentFrame(0);
+                  navigate("/main");
+                }}
+              >
                 <Tooltip title="Back">
                   <ArrowLeftIcon />
                 </Tooltip>
