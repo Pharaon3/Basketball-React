@@ -3,27 +3,17 @@ import "./MainPage.scss";
 import { useNavigate } from "react-router-dom";
 import fieldLine from "../assets/field-line-with-logo.png";
 import fieldWithoutLine from "../assets/field-without-line.png";
-// import { ReactComponent as ArrowLeftIcon } from "../assets/svg/arrow-left.svg";
 import { ReactComponent as MenuIcon } from "../assets/svg/menu.svg";
 import { ReactComponent as LinkIcon } from "../assets/svg/link.svg";
-// import { ReactComponent as CameraIcon } from "../assets/svg/camera.svg";
 import { ReactComponent as DownloadIcon } from "../assets/svg/download.svg";
-// import { ReactComponent as BookmarkIcon } from "../assets/svg/bookmark.svg";
 import { ReactComponent as FieldIcon } from "../assets/svg/field.svg";
 import { ReactComponent as MinimizeIcon } from "../assets/svg/minimize.svg";
 import { ReactComponent as MaximizeIcon } from "../assets/svg/maximize.svg";
 import { ReactComponent as VideoIcon } from "../assets/svg/video.svg";
-// import { ReactComponent as UsersIcon } from "../assets/svg/users.svg";
 
 import { ReactComponent as GlobeIcon } from "../assets/svg/globe.svg";
 import { ReactComponent as HelpCircleIcon } from "../assets/svg/help-circle.svg";
 import { ReactComponent as LogInIcon } from "../assets/svg/log-in.svg";
-
-// import { ReactComponent as PlayIcon } from "../assets/svg/play.svg";
-// import { ReactComponent as PlayCircleIcon } from "../assets/svg/play-circle.svg";
-// import { ReactComponent as PauseIcon } from "../assets/svg/pause.svg";
-// import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
-// import { ReactComponent as RepeatIcon } from "../assets/svg/repeat.svg";
 
 import { ReactComponent as BallIcon } from "../assets/svg/basketball.svg";
 import { ReactComponent as TrashIcon } from "../assets/svg/trash.svg";
@@ -33,7 +23,6 @@ import { ReactComponent as UserIcon } from "../assets/svg/user.svg";
 import { ReactComponent as PencilIcon } from "../assets/svg/pencil.svg";
 import { ReactComponent as ArrowIcon } from "../assets/svg/arrows.svg";
 import { ReactComponent as CursorIcon } from "../assets/svg/mouse-pointer.svg";
-import { ReactComponent as PointerIcon } from "../assets/svg/x.svg";
 import { ReactComponent as CircleIcon } from "../assets/svg/circle.svg";
 import { ReactComponent as SquareIcon } from "../assets/svg/square.svg";
 import { ReactComponent as TypeIcon } from "../assets/svg/type.svg";
@@ -60,8 +49,6 @@ function MainPage({
   setMousePosX,
   mousePosY,
   setMousePosY,
-  frame,
-  setFrame,
   eachFrameCircle,
   setEachFrameCircle,
   circleId,
@@ -70,15 +57,11 @@ function MainPage({
   setCurrentNumbers,
   newCircles,
   setNewCircles,
-  newPoints,
   setNewPoints,
-  newBalls,
   setNewBalls,
 }) {
   const navigate = useNavigate();
   const [dragCircleItem, setDragCircleItem] = useState(-2);
-  const [dragPointItem, setDragPointItem] = useState(-2);
-  const [dragBallItem, setDragBallItem] = useState(-2);
   const [dropMenuItem, setDropMenuItem] = useState(-1);
   const [rosterShowFlag, setRosterShowFlag] = useState(false);
   const [positionDiff, setPositionDiff] = useState({circle: 18, point: 10, ball: 12.5});
